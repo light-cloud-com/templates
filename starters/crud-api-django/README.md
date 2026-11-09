@@ -28,6 +28,33 @@ The app creates the `items` table when it starts, so there is no migration step.
 
 An item is `{ "id", "name", "description", "created_at", "updated_at" }`. `name` is required (1 to 200 characters); `description` is optional. Errors are JSON `{ "error": "..." }`: `400` for invalid input, `404` for an unknown item.
 
+## Project structure
+
+```text
+.
+├── config/              # the Django project
+│   ├── settings.py      # settings, read from the environment
+│   ├── urls.py          # GET /, GET /health, then each app's urls
+│   ├── views.py         # index, health check, JSON 404/500 pages
+│   ├── exceptions.py    # every API error as {"error": "..."}
+│   ├── wsgi.py          # entry point: runs migrations, then serves
+│   └── tests.py
+├── items/               # the items app
+│   ├── models.py
+│   ├── serializers.py   # validation
+│   ├── views.py         # ItemViewSet: /items CRUD
+│   ├── urls.py
+│   ├── migrations/
+│   └── tests.py
+├── manage.py
+├── gunicorn.conf.py     # 4 threads per worker
+├── requirements.txt     # runtime dependencies (what Light Cloud installs)
+├── requirements-dev.txt # adds ruff
+├── pyproject.toml       # ruff settings
+├── .env.example         # the variables, for local runs
+└── .python-version      # Python 3.12
+```
+
 ## Run locally
 
 You need Python 3.12 and Docker (for the database).
@@ -35,12 +62,24 @@ You need Python 3.12 and Docker (for the database).
 ```bash
 docker run -d --name items-db -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:16
 python3 -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
-export DB_HOST=localhost DB_NAME=postgres DB_USER=postgres DB_PASSWORD=postgres DB_SSLMODE=disable
+pip install -r requirements-dev.txt
+cp .env.example .env
+set -a && . ./.env && set +a
 gunicorn config.wsgi:application --bind 0.0.0.0:8080
 ```
 
 The API is now on http://localhost:8080.
+
+## Run the tests
+
+With the database running and `.env` loaded as above:
+
+```bash
+python manage.py test
+ruff check .
+```
+
+Django creates a separate `test_` database for the run and drops it afterwards.
 
 ## Try it
 
@@ -68,7 +107,7 @@ On Light Cloud, use your app's URL instead of http://localhost:8080.
 
 ## Make it yours
 
-The model is in `items/models.py` and the API in `items/views.py`. Add a field, run `python manage.py makemigrations`, commit the new migration and push: migrations run when the app starts, and Light Cloud redeploys on every push.
+The model is in `items/models.py`, its validation in `items/serializers.py` and the API in `items/views.py`. A new resource is a new app (`python manage.py startapp`), added to `INSTALLED_APPS` and `config/urls.py`. Add a field, run `python manage.py makemigrations`, commit the new migration and push: migrations run when the app starts, and Light Cloud redeploys on every push.
 
 ## License
 

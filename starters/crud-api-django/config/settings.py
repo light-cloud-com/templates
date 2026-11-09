@@ -39,7 +39,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "UNAUTHENTICATED_USER": None,
-    "EXCEPTION_HANDLER": "items.views.exception_handler",
+    "EXCEPTION_HANDLER": "config.exceptions.exception_handler",
 }
 
 LOGGING = {
