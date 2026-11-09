@@ -28,6 +28,29 @@ The app creates the `items` table when it starts, so there is no migration step.
 
 An item is `{ "id", "name", "description", "created_at", "updated_at" }`. `name` is required (1 to 200 characters); `description` is optional. Errors are JSON `{ "error": "..." }`: `400` for invalid input, `404` for an unknown item.
 
+## Project structure
+
+```text
+.
+├── app/
+│   ├── __init__.py      # create_app(): opens the database, registers blueprints
+│   ├── config.py        # settings read from the environment
+│   ├── db.py            # connection pool and CREATE TABLE
+│   ├── errors.py        # every error as {"error": "..."}
+│   ├── validation.py    # request body and query checks
+│   └── routes/
+│       ├── health.py    # GET / and GET /health
+│       └── items.py     # /items CRUD blueprint
+├── tests/               # pytest, against a real PostgreSQL
+├── main.py              # entry point: gunicorn main:app
+├── gunicorn.conf.py     # 4 threads per worker
+├── requirements.txt     # runtime dependencies (what Light Cloud installs)
+├── requirements-dev.txt # adds pytest and ruff
+├── pyproject.toml       # pytest and ruff settings
+├── .env.example         # the variables, for local runs
+└── .python-version      # Python 3.12
+```
+
 ## Run locally
 
 You need Python 3.12 and Docker (for the database).
@@ -35,12 +58,24 @@ You need Python 3.12 and Docker (for the database).
 ```bash
 docker run -d --name items-db -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:16
 python3 -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
-export DB_HOST=localhost DB_NAME=postgres DB_USER=postgres DB_PASSWORD=postgres DB_SSLMODE=disable
-gunicorn app:app --bind 0.0.0.0:8080
+pip install -r requirements-dev.txt
+cp .env.example .env
+set -a && . ./.env && set +a
+gunicorn main:app --bind 0.0.0.0:8080
 ```
 
 The API is now on http://localhost:8080.
+
+## Run the tests
+
+With the database running and `.env` loaded as above:
+
+```bash
+pytest
+ruff check .
+```
+
+The tests use the database in `DB_*`. They create their own items and delete them afterwards.
 
 ## Try it
 
@@ -67,7 +102,7 @@ On Light Cloud, use your app's URL instead of http://localhost:8080.
 
 ## Make it yours
 
-The code is in `app.py`. Rename `items`, add columns to the `CREATE TABLE` statement and the validation, and push: Light Cloud redeploys on every push.
+Rename `items`, add columns to the `CREATE TABLE` statement in `app/db.py`, to `parse_item` in `app/validation.py` and to the queries in `app/routes/items.py`, and push: Light Cloud redeploys on every push. A new resource is a new blueprint in `app/routes/`, registered in `create_app`.
 
 ## License
 
