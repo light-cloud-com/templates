@@ -16,23 +16,48 @@
 
 ## Features
 
-- Docusaurus 3, scaffolded with `create-docusaurus`
-- Docs, blog and versioning built in
-- MDX — write Markdown, embed React
-- Ready for production deployment
+- Docusaurus 3, scaffolded with `create-docusaurus` (TypeScript)
+- Docs with a generated sidebar, a blog with authors and tags, and a custom React home page
+- MDX: write Markdown, embed React components
+- Versioning and translations built in
+- Faster builds with `@docusaurus/faster`
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    docs["docs/ and blog/ (MDX)"] --> build["docusaurus build"]
+    pages["src/pages + src/components"] --> build
+    build --> out["build/ (static HTML)"]
+    out -->|served by| lc["Light Cloud CDN"]
+```
+
+## Project structure
+
+```text
+.
+├── blog/                   # Blog posts, authors.yml, tags.yml
+├── docs/                   # Documentation pages (MDX), grouped by folder
+├── src/
+│   ├── components/         # React components used by pages
+│   ├── css/custom.css      # Theme overrides
+│   └── pages/              # Standalone pages, e.g. the home page
+├── static/                 # Images and files copied as is
+├── docusaurus.config.ts    # Site title, navbar, footer, presets
+└── sidebars.ts             # Docs sidebar
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-
-# Build for production
-npm run build
+npm install         # install dependencies
+npm start           # dev server on http://localhost:3000
+npm run typecheck   # TypeScript check
+npm run build       # static build into build/
+npm run serve       # serve the build locally
 ```
+
+Before you publish, set `title`, `url` and the navbar and footer links in `docusaurus.config.ts`.
 
 ## Deploy to Light Cloud
 
@@ -72,6 +97,10 @@ This starter is the output of `npx create-docusaurus@latest`, with only the chan
 
 - [Docusaurus documentation](https://docusaurus.io/docs)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 
