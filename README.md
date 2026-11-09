@@ -17,6 +17,8 @@ open-source/    setups for open-source apps (coming)
 | Template | What it is | Language | Database | Deploy |
 | --- | --- | --- | --- | --- |
 | [Open SaaS](./starters/opensaas) | The Open SaaS starter (Wasp) with a connected PostgreSQL database | JavaScript | PostgreSQL | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://console.light-cloud.com/new?repo=https://github.com/light-cloud-com/starter-opensaas) |
+| [SaaS starter (Next.js)](./starters/saas-starter-nextjs) | Complete SaaS on Next.js and PostgreSQL: sign-in, teams and roles, onboarding, Stripe billing, admin panel and a REST API | TypeScript | PostgreSQL | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/saas-starter-nextjs) |
+| [SaaS starter (React + Node.js)](./starters/saas-starter-react-node) | Complete SaaS with a React app and an Express API on PostgreSQL: sign-in, teams and roles, onboarding, Stripe billing, admin panel and a REST API | TypeScript | PostgreSQL | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/saas-starter-react-node) |
 | [React](./starters/starter-react) | Modern React app with Vite | JavaScript |  | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/starter-react) |
 | [Vue](./starters/starter-vue) | Vue 3 app with Vite | JavaScript |  | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/starter-vue) |
 | [Angular](./starters/starter-angular) | Angular 21 with standalone components | JavaScript |  | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/starter-angular) |

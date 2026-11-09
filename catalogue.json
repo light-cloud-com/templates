@@ -13,6 +13,22 @@
     "commit": "699f9b5ea52267c78c8e9b09adca3f23a2032f19"
   },
   {
+    "folder": "starters/saas-starter-nextjs",
+    "slug": "saas-starter-nextjs",
+    "name": "SaaS starter (Next.js)",
+    "description": "Complete SaaS on Next.js and PostgreSQL: sign-in, teams and roles, onboarding, Stripe billing, admin panel and a REST API",
+    "language": "TypeScript",
+    "database": true
+  },
+  {
+    "folder": "starters/saas-starter-react-node",
+    "slug": "saas-starter-react-node",
+    "name": "SaaS starter (React + Node.js)",
+    "description": "Complete SaaS with a React app and an Express API on PostgreSQL: sign-in, teams and roles, onboarding, Stripe billing, admin panel and a REST API",
+    "language": "TypeScript",
+    "database": true
+  },
+  {
     "folder": "starters/starter-react",
     "slug": "starter-react",
     "name": "React",
