@@ -1,115 +1,162 @@
-# SaaS Starter: React + Node.js + PostgreSQL
+# React and Node.js SaaS Starter Kit
 
-A complete SaaS starter built with React 19, Vite, an Express 5 API on Node.js, PostgreSQL, Better Auth, Drizzle ORM, Tailwind CSS and shadcn/ui, all in TypeScript. It has sign-up, teams with roles, onboarding, Stripe subscriptions, an admin panel, API keys and a REST API. Deploy it with a database in one click: open the URL, sign up, and it works with no keys.
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev) [![Express 5](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)](https://expressjs.com) [![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org) [![Tests: Vitest](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](server/test) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/react-node-saas-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/react-node-saas-starter)
 
-[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/saas-starter-react-node)
+A React and Node.js SaaS starter kit in TypeScript: a React 19 single-page app built with Vite, an Express 5 API, PostgreSQL, Better Auth, Drizzle ORM, Tailwind CSS and shadcn/ui, served by one Node.js server. It is a free, MIT-licensed SaaS boilerplate for developers who want sign-up, teams with roles, onboarding, Stripe subscriptions, an admin panel, API keys and a REST API already built. It runs with no third-party keys: email, billing and social sign-in switch on when you add their variables.
+
+## Screenshots
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/landing-dark.png"><img alt="React and Node.js SaaS Starter Kit: landing page with a product preview, features and pricing" src="docs/screenshots/landing-light.png" width="100%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dashboard-dark.png"><img alt="React and Node.js SaaS Starter Kit: dashboard with a getting-started checklist in the sidebar app shell" src="docs/screenshots/dashboard-light.png" width="100%"></picture>
+
+<table>
+  <tr>
+    <td width="50%"><img alt="React and Node.js SaaS Starter Kit: onboarding to name the workspace, invite teammates and pick a plan" src="docs/screenshots/onboarding-light.png" width="100%"><br>Onboarding</td>
+    <td width="50%"><img alt="React and Node.js SaaS Starter Kit: workspace members settings with roles and pending invitations" src="docs/screenshots/settings-members-light.png" width="100%"><br>Members and roles</td>
+  </tr>
+  <tr>
+    <td width="50%"><img alt="React and Node.js SaaS Starter Kit: admin page listing users and workspaces with plans and subscriptions" src="docs/screenshots/admin-light.png" width="100%"><br>Admin</td>
+    <td width="50%"><img alt="React and Node.js SaaS Starter Kit: pricing page with Free, Pro and Business plans" src="docs/screenshots/pricing-light.png" width="100%"><br>Pricing</td>
+  </tr>
+</table>
 
 ## Features
 
-- **Accounts**: email and password sign-up and sign-in, sign-out, password reset by email, and email verification (only when an email provider is set). GitHub and Google sign-in appear when you add their keys. Sessions live in the database, in httpOnly cookies.
-- **Teams**: workspaces with owner, admin and member roles. Switch between workspaces, invite people by email (the invite link can also be copied in the app), accept or decline invites. Inviting the same address again resends the invitation, and pending invitations count towards the plan's member limit.
-- **Onboarding**: after the first sign-up, name your workspace, invite teammates (optional) and pick a plan (when billing is on), then land on a dashboard with a getting-started checklist.
-- **Marketing pages**: landing page with a product preview, features, pricing and FAQ, a pricing page driven by one plans file (the chosen plan carries through sign-up), terms and privacy placeholders. Light and dark theme, works at phone width, keyboard and screen reader friendly.
-- **App**: a flat, professional UI (Inter, one indigo accent, zinc neutrals) with a sidebar shell, workspace switcher and user menu, a dashboard with a getting-started checklist, a workspace-scoped example resource (Projects) with plan limits, account settings and workspace settings (members, invites, roles, API keys, billing, danger zone). Every destructive action asks first, forms show errors under each field, lists load with skeletons and failed requests offer a retry.
-- **Billing**: Stripe Checkout to upgrade, the Customer Portal to manage, a webhook to keep subscriptions in sync. Off until you add Stripe keys; everyone is on Free until then.
-- **Admin panel**: `/admin` lists users and workspaces with search, plan and subscription, and bans users.
+- **Accounts**: email and password sign-up, sign-in, sign-out and password reset; email verification once an email provider is set; GitHub and Google sign-in when their keys are set. Sessions live in the database, in httpOnly cookies.
+- **Teams**: workspaces with owner, admin and member roles, a workspace switcher, invitations by email or a copied link. Inviting the same address again resends the invitation, and pending invitations count towards the member limit.
+- **Onboarding**: name the workspace, invite teammates and pick a plan, then land on a dashboard with a getting-started checklist. A plan chosen on the pricing page carries through sign-up.
+- **Billing**: Stripe Checkout to upgrade, the Customer Portal to manage, a webhook to keep subscriptions in sync. Plans and limits live in `shared/plans.ts`, used by both client and server.
+- **Admin** at `/admin`: users and workspaces with search, each workspace's plan and subscription, and a ban button.
+- **Example resource**: Projects, scoped to the workspace, with plan limits.
+- **API keys and REST API**: per-workspace keys, stored as a SHA-256 hash and shown once, for `/api/v1/projects`, limited to 120 requests a minute per key.
 - **Emails**: verify, reset, invite and welcome through Resend. Without a key they are written to the server log, link included.
-- **API keys and REST API**: per-workspace keys, stored hashed and shown once, for `/api/v1/projects`.
-- **Health check**: `GET /api/health` answers `200` when the database does and `503` when it does not.
+- **UI**: landing, pricing, terms and privacy pages, light and dark theme, phone layouts, per-field form errors, confirmations before destructive actions, skeletons and retry on failed requests.
+- **One server**: Express serves the API and the built React app on one port, with migrations applied on start and a `GET /api/health` check.
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    browser["Browser<br/>React SPA"] -->|"pages, /assets"| server
-    browser -->|"/api (session cookie)"| server
-    scripts["Scripts and services"] -->|"/api/v1 (Bearer API key)"| server
-    subgraph server["One Node.js container"]
-        express["Express 5"] --> auth["Better Auth<br/>/api/auth"]
-        express --> routes["App routes<br/>/api/projects, /api/admin"]
-        express --> spa["Built React app<br/>index.html fallback"]
-    end
-    auth --> db[("PostgreSQL")]
-    routes --> db
-    auth -.->|optional| stripe["Stripe"]
-    auth -.->|optional| resend["Resend"]
-    auth -.->|optional| oauth["GitHub / Google"]
+You need Node.js 22.22 or newer and Docker (for a local PostgreSQL).
+
+```bash
+git clone https://github.com/light-cloud-templates/react-node-saas-starter.git
+cd react-node-saas-starter
+docker run -d --name saas-db -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:16
+cp .env.example .env           # then set AUTH_SECRET, e.g. to the output of: openssl rand -base64 32
+npm install
+npm run dev
 ```
 
-One server does everything: `npm run build` compiles the React app into `dist/client` and the server into `dist/server`, and `npm start` serves both on `PORT`. Client routes such as `/settings/members` get `index.html`, so refreshing any page works. Database migrations in `server/drizzle` run on start, before the server accepts traffic, and are safe to run on every start and from several instances at once.
+`npm run dev` starts the API on port 8080 (restarting when a file changes) and Vite on port 5173, which proxies `/api` to the API. Open <http://localhost:5173> and sign up: the first account is the admin. On Windows, run `npm run dev:server` and `npm run dev:client` in two terminals.
 
-The public URL is not fixed in advance. Unless `APP_URL` is set, the server works out its address from each request (`x-forwarded-host` and `x-forwarded-proto` behind a proxy), so links in emails, OAuth callbacks and Stripe redirects use whatever domain the app is reached on. Only same-origin requests and redirect targets are accepted.
+Other ways to start:
 
-On Light Cloud this is detected as an **Express** app (Node.js, container): `express` is a production dependency in the root `package.json`, which outranks React, so it is built with `npm ci`, `npm run build` and started with `npm start`.
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/react-node-saas-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/react-node-saas-starter) and press Deploy to get a running copy with a database.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/react-node-saas-starter)
+
+The Deploy button copies this template into your GitHub account and creates:
+
+- a server app (detected as Express) that runs `npm ci`, `npm run build` and `npm start` on `PORT`
+- a PostgreSQL database, with `DATABASE_URL` set on the app
+- a random `AUTH_SECRET`, generated at deploy
+
+Open the URL and sign up: it works with no other keys. The server works out its public URL from each request, so links in emails, OAuth callbacks and Stripe redirects use whatever domain the app is reached on. Every push to the default branch deploys again. Templates with a database need a paid Light Cloud plan.
+
+### Deploy anywhere else
+
+There is no Light Cloud code in it. Any host that runs Node.js 22.22 and can reach PostgreSQL runs it: set `DATABASE_URL` and `AUTH_SECRET` (and `NODE_ENV=production`), run `npm ci && npm run build`, then `npm start`.
 
 ## Project structure
 
 ```text
 .
-├── client/                      # React app (Vite root)
-│   ├── index.html
-│   ├── public/                  # favicon, theme script (no flash of the wrong theme)
+├── client/                 # React app (Vite root)
 │   └── src/
-│       ├── app.tsx              # Route table
-│       ├── components/          # App shell, menus, plan cards; ui/ holds shadcn/ui components
-│       ├── features/            # Pieces used by several pages (project form, invite form)
-│       ├── lib/                 # auth-client, api (fetch), queries (TanStack Query), theme
-│       └── pages/               # marketing/, auth/, app/ and app/settings/
+│       ├── app.tsx         # route table
+│       ├── components/     # app shell, menus, plan cards; ui/ holds shadcn/ui components
+│       ├── lib/            # auth client, fetch helpers, TanStack Query queries, theme
+│       └── pages/          # marketing/, auth/, app/ and app/settings/
 ├── server/
-│   ├── drizzle/                 # SQL migrations, committed, applied on start
+│   ├── drizzle/            # SQL migrations, committed, applied on start
 │   ├── src/
-│   │   ├── index.ts             # Migrate, then listen; graceful shutdown
-│   │   ├── app.ts               # Express app: headers, auth, routes, SPA fallback, errors
-│   │   ├── config.ts            # Every environment variable, in one place
-│   │   ├── db/                  # Pool, Drizzle schema (auth-schema.ts is generated), migrator
-│   │   ├── lib/                 # auth, billing, email, projects, url
-│   │   ├── middleware/auth.ts   # Session, workspace role, platform admin, API key checks
-│   │   └── routes/              # meta (health, config), projects, workspace, admin, v1
-│   └── test/                    # Vitest: unit, smoke and integration tests
-├── shared/                      # Used by client and server: plans, roles and permissions, zod schemas
-├── components.json              # shadcn/ui settings
-├── drizzle.config.ts
-├── vite.config.ts
-├── .env.example
-└── package.json
+│   │   ├── index.ts        # migrate, then listen; graceful shutdown
+│   │   ├── app.ts          # Express app: headers, auth, routes, SPA fallback, errors
+│   │   ├── config.ts       # every environment variable, in one place
+│   │   ├── lib/            # auth, billing, email, projects, url
+│   │   ├── middleware/     # session, workspace role, platform admin and API key checks
+│   │   └── routes/         # meta (health, config), projects, workspace, admin, v1
+│   └── test/               # Vitest unit, smoke and integration tests
+├── shared/                 # plans, roles and permissions, zod schemas
+├── vite.config.ts          # builds the client into dist/client
+└── .env.example            # every environment variable, explained
+```
+
+## Pages
+
+| Route | What it is |
+| --- | --- |
+| `/`, `/pricing`, `/terms`, `/privacy` | Marketing pages |
+| `/sign-up`, `/sign-in`, `/forgot-password` | Accounts, plus GitHub and Google buttons when configured |
+| `/onboarding` | Name the workspace, invite teammates, pick a plan |
+| `/dashboard` | Getting-started checklist |
+| `/projects` | The example resource, with plan limits |
+| `/settings/account`, `/settings/workspace`, `/settings/members`, `/settings/api-keys`, `/settings/billing` | Account and workspace settings |
+| `/admin` | Users and workspaces, for platform admins |
+
+## API usage
+
+Create a key in **Settings → API keys** (owners and admins). It is shown once. Each key belongs to one workspace.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/health` | `200` when the database answers, `503` when it does not |
+| `GET` | `/api/v1/projects` | `200 {"data": [...]}`, newest first |
+| `POST` | `/api/v1/projects` | `201 {"data": {...}}`; `402` over the plan limit |
+| `GET` | `/api/v1/projects/:id` | `200 {"data": {...}}` or `404` |
+| `PATCH` | `/api/v1/projects/:id` | `200 {"data": {...}}` or `404` |
+| `DELETE` | `/api/v1/projects/:id` | `204` or `404` |
+
+Errors are JSON `{"error": "..."}`: `400` invalid input, `401` missing or wrong key, `429` too many requests.
+
+```bash
+curl -X POST http://localhost:8080/api/v1/projects \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "content-type: application/json" \
+  -d '{"name": "Website relaunch", "description": "Q3"}'
 ```
 
 ## Environment variables
 
-| Variable | Needed | Meaning |
-| --- | --- | --- |
-| `DATABASE_URL` | Set by the platform | PostgreSQL connection URL. On Light Cloud it ends with `sslmode=require` (TLS on, certificate not verified). Leave `sslmode` out for a local database without TLS. |
-| `AUTH_SECRET` | Set by the platform | Signs sessions and tokens. Light Cloud generates a random one. Required in production. |
-| `PORT` | Set by the platform | Port to listen on (default `8080`). |
-| `APP_URL` | Optional | Public URL, e.g. `https://app.example.com`. Set it once you have a domain; without it the URL comes from each request. |
-| `APP_NAME` | Optional | Product name in the UI and emails (default `Acme`). |
-| `ADMIN_EMAILS` | Optional | Comma-separated emails that are platform admins. |
-| `RESEND_API_KEY`, `EMAIL_FROM` | Switches on email | Send emails through Resend. Turns on email verification. |
-| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | Switches on GitHub sign-in | Both needed. |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Switches on Google sign-in | Both needed. |
-| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_PRO`, `STRIPE_PRICE_BUSINESS` | Switches on billing | All four needed. |
+| Name | Required | Default | What it does |
+| --- | --- | --- | --- |
+| `DATABASE_URL` | Yes | none | PostgreSQL connection URL. Set by Light Cloud. |
+| `AUTH_SECRET` | In production | a dev-only value | Signs sessions and tokens. Generated by Light Cloud at deploy. |
+| `PORT` | No | `8080` | Port to listen on. Set by Light Cloud. |
+| `APP_URL` | No | from each request | Public URL. Set it once you have a domain. |
+| `APP_NAME` | No | `Acme` | Product name in the UI and emails. |
+| `ADMIN_EMAILS` | No | empty | Comma-separated emails that are platform admins. |
+| `RESEND_API_KEY` | No | empty | Sends email through Resend and turns on email verification. |
+| `EMAIL_FROM` | No | `Acme <onboarding@resend.dev>` | Sender, on a domain verified in Resend. |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | No | empty | Turn on GitHub sign-in (both needed). |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | No | empty | Turn on Google sign-in (both needed). |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_PRO`, `STRIPE_PRICE_BUSINESS` | No | empty | Turn on billing (all four needed). |
 
-The browser only receives on/off flags for these (`GET /api/config`), never their values.
+The browser only receives on/off flags for these (`GET /api/config`), never their values. Set `APP_URL` as soon as you know your domain: without it, a forged `x-forwarded-host` header can change the domain in a password reset email.
 
-## Run locally
+## Turn on email, billing and social sign-in
 
-You need Node.js 22.22 or newer and Docker (for the database).
+**Email.** Create a [Resend](https://resend.com) account, verify your domain and create an API key. Set `RESEND_API_KEY` and `EMAIL_FROM` and redeploy. New accounts then confirm their email before the first sign-in.
 
-```bash
-docker run -d --name saas-db -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:16
-cp .env.example .env        # then set AUTH_SECRET to any long random string
-npm install
-npm run dev
-```
+**Stripe billing.** In Stripe, create two products with monthly prices, Pro and Business, and copy their price ids into `STRIPE_PRICE_PRO` and `STRIPE_PRICE_BUSINESS`. Add a webhook endpoint at `https://<your-app>/api/auth/stripe/webhook` for `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated` and `customer.subscription.deleted`, and copy its signing secret into `STRIPE_WEBHOOK_SECRET`. Set `STRIPE_SECRET_KEY` and redeploy. Only the workspace owner can upgrade or open the Customer Portal.
 
-`npm run dev` starts the API on http://localhost:8080 (restarting when a file changes) and Vite on http://localhost:5173, which proxies `/api` to the API. Open http://localhost:5173. On Windows, run `npm run dev:server` and `npm run dev:client` in two terminals.
+**GitHub or Google sign-in.** Create a GitHub OAuth app with the callback URL `https://<your-app>/api/auth/callback/github`, or a Google OAuth client (web application) with the redirect URI `https://<your-app>/api/auth/callback/google`. Set the client id and secret; the buttons appear once both values are set.
 
-To run it the way production does:
-
-```bash
-npm run build
-node --env-file=.env dist/server/src/index.js   # then open http://localhost:8080
-```
+**How admin works.** The first account ever created on a deployment is a platform admin, and so is anyone in `ADMIN_EMAILS` (promoted on their next sign-in). Admins see **Admin** in the sidebar; everyone else gets a 404 page, and `/api/admin` answers `403`. Workspace roles are separate: owner (billing, delete the workspace), admin (members, invites, settings, API keys, delete projects) and member (create and edit projects), defined once in `shared/permissions.ts` and checked on every API route.
 
 ## Testing
 
@@ -119,69 +166,61 @@ npm run typecheck
 npm test
 ```
 
-Unit tests cover roles and permissions, plan limits, API key hashing and URL handling. The smoke test boots the app against an unreachable database (health must say `503`). With `DATABASE_URL` set, the integration tests sign up, create a workspace and an API key, create projects through `/api/v1` up to the Free limit, check the admin lists' workspace counts and plans, the member limit with pending invitations, resent invitations, that members cannot delete projects, and the name and email checks. They create their own users, so point `DATABASE_URL` at a scratch database.
+Unit tests cover roles and permissions, plan limits, API key hashing and URL handling. The smoke test boots the app against an unreachable database (health must answer `503`). With `DATABASE_URL` set, the integration tests sign up, create a workspace and an API key, create projects through `/api/v1` up to the Free limit and check member limits, invitations and role rules. They create their own users, so point `DATABASE_URL` at a scratch database.
 
-## Turn on email
+## How it works
 
-1. Create a [Resend](https://resend.com) account, verify your domain and create an API key.
-2. Set `RESEND_API_KEY` and `EMAIL_FROM` (for example `Acme <hello@yourdomain.com>`) and redeploy.
-
-New accounts now confirm their email before the first sign-in. Until then, every email is printed in the server log with its link, and invitation links can be copied from **Settings → Members**.
-
-## Turn on Stripe billing
-
-1. In Stripe, create two products with monthly prices, Pro and Business. Copy their price ids into `STRIPE_PRICE_PRO` and `STRIPE_PRICE_BUSINESS`.
-2. Add a webhook endpoint at `https://<your-app>/api/auth/stripe/webhook` for the `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated` and `customer.subscription.deleted` events, and copy its signing secret into `STRIPE_WEBHOOK_SECRET`.
-3. Set `STRIPE_SECRET_KEY` and redeploy.
-
-Subscriptions belong to workspaces. Only the owner can upgrade or open the Customer Portal. Plan names, prices shown and limits live in `shared/plans.ts`; Stripe charges what the price ids say.
-
-## Turn on GitHub or Google sign-in
-
-- **GitHub**: create an OAuth app with the callback URL `https://<your-app>/api/auth/callback/github`, then set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
-- **Google**: create an OAuth client (web application) with the redirect URI `https://<your-app>/api/auth/callback/google`, then set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
-
-The buttons appear on the sign-in and sign-up pages once both values are set.
-
-## How admin works
-
-The first account ever created on a deployment is a platform admin, and so is anyone whose email is in `ADMIN_EMAILS` (they are promoted on their next sign-in). Admins see **Admin** in the sidebar: users and workspaces with search, each workspace's plan and subscription, and a ban button. Banned users are signed out and cannot sign in. Everyone else gets a 404 page, and `/api/admin` answers `403`.
-
-Workspace roles are separate: **owner** (billing, delete the workspace), **admin** (members, invites, settings, API keys, delete projects), **member** (create and edit projects). They are defined once in `shared/permissions.ts` and checked on every API route; the UI hides what a role cannot do.
-
-## API
-
-Create a key in **Settings → API keys** (owners and admins). It is shown once and stored as a SHA-256 hash. Each key belongs to one workspace and allows 120 requests a minute.
-
-```bash
-export KEY=sk_...           # your key
-export APP=https://<your-app>
-
-curl -H "Authorization: Bearer $KEY" $APP/api/v1/projects
-curl -X POST -H "Authorization: Bearer $KEY" -H "content-type: application/json" \
-  -d '{"name": "Website relaunch", "description": "Q3"}' $APP/api/v1/projects
-curl -H "Authorization: Bearer $KEY" $APP/api/v1/projects/<id>
-curl -X PATCH -H "Authorization: Bearer $KEY" -H "content-type: application/json" \
-  -d '{"name": "Renamed"}' $APP/api/v1/projects/<id>
-curl -X DELETE -H "Authorization: Bearer $KEY" $APP/api/v1/projects/<id>
+```mermaid
+flowchart LR
+    browser["Browser<br/>React SPA"] -->|"pages and /api with session cookie"| express
+    scripts["Scripts and services"] -->|"/api/v1 with Bearer API key"| express
+    subgraph container["One Node.js server"]
+        express["Express 5"] --> auth["Better Auth<br/>/api/auth"]
+        express --> routes["App routes<br/>/api/projects, /api/admin"]
+        express --> spa["Built React app<br/>index.html fallback"]
+    end
+    auth --> db[("PostgreSQL")]
+    routes --> db
+    auth -.->|optional| stripe["Stripe"]
+    auth -.->|optional| resend["Resend"]
+    auth -.->|optional| oauth["GitHub and Google"]
 ```
 
-| Method | Path | Answers |
-| --- | --- | --- |
-| `GET` | `/api/v1/projects` | `200 {"data": [...]}`, newest first |
-| `POST` | `/api/v1/projects` | `201 {"data": {...}}`; `402` over the plan limit |
-| `GET` | `/api/v1/projects/:id` | `200 {"data": {...}}` or `404` |
-| `PATCH` | `/api/v1/projects/:id` | `200 {"data": {...}}` or `404` |
-| `DELETE` | `/api/v1/projects/:id` | `204` or `404` |
+`npm run build` compiles the React app into `dist/client` and the server into `dist/server`, and `npm start` serves both. Client routes such as `/settings/members` get `index.html`, so refreshing any page works. Migrations in `server/drizzle` run before the server accepts traffic and are safe to run from several instances at once.
 
-Errors are JSON `{"error": "..."}`: `400` invalid input, `401` missing or wrong key, `429` too many requests.
+## FAQ
 
-## Make it yours
+### Does it work without Stripe or an email provider?
 
-Projects is the example resource: its table is in `server/src/db/schema.ts`, its rules in `server/src/lib/projects.ts`, its validation in `shared/schemas.ts` and its pages in `client/src/pages/app/`. Rename it, add columns, then run `npm run db:generate` to write a new migration and commit it. After changing Better Auth plugins, regenerate `server/src/db/auth-schema.ts` with `npx auth@1.7.18 generate --config server/src/lib/auth.ts --output server/src/db/auth-schema.ts` (set `DATABASE_URL`, and the four Stripe variables to any value so the billing tables are included). Add shadcn/ui components with `npx shadcn@4.23.0 add <name>` from the project root (they land in `client/src/components/ui`). Colours, radius and font are tokens at the top of `client/src/index.css`; change the accent there to rebrand. Push, and Light Cloud redeploys.
+Yes. With only `DATABASE_URL` and `AUTH_SECRET`, sign-up, teams, projects, admin and the API all work. Everyone is on Free, and emails with their links are printed in the server log.
 
-With no `APP_URL`, a forged `x-forwarded-host` header can change the domain in a password reset email that someone requests for another person. Set `APP_URL` as soon as you know your domain.
+### How do I add my own resource instead of Projects?
 
-## License
+The table is in `server/src/db/schema.ts`, the rules in `server/src/lib/projects.ts`, validation in `shared/schemas.ts` and the pages in `client/src/pages/app/`. Rename or copy them, then run `npm run db:generate` and commit the new migration.
 
-MIT, see [LICENSE](./LICENSE).
+### How do I add a shadcn/ui component?
+
+Run `npx shadcn@4.23.0 add <name>` from the project root; components land in `client/src/components/ui`. Colours, radius and font are tokens at the top of `client/src/index.css`.
+
+### Why one server instead of a separate frontend and API?
+
+One origin means session cookies work without CORS, and there is one thing to deploy. Vite still runs separately in development, proxying `/api` to Express.
+
+### Can I deploy it without Light Cloud?
+
+Yes. Any Node.js 22.22 host with PostgreSQL runs it with `npm run build` and `npm start`, once `DATABASE_URL` and `AUTH_SECRET` are set.
+
+## Related templates
+
+- [nextjs-saas-starter](https://github.com/light-cloud-templates/nextjs-saas-starter): the same SaaS features in Next.js 16
+- [open-saas-starter](https://github.com/light-cloud-templates/open-saas-starter): Open SaaS by Wasp, with an AI demo app and file uploads
+- [react-vite-starter](https://github.com/light-cloud-templates/react-vite-starter): a plain React and Vite app
+- [express-postgresql-crud-api](https://github.com/light-cloud-templates/express-postgresql-crud-api): a small Express REST API with PostgreSQL
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).
+
+---
+
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
