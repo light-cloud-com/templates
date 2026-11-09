@@ -1,0 +1,15 @@
+---
+layout: layouts/base.njk
+---
+<h1>Hello from Eleventy</h1>
+<p>This site was built by Eleventy and is served as static files from the edge.</p>
+
+<h2>Posts</h2>
+<ul class="post-list">
+  {%- for post in collections.posts | reverse %}
+  <li>
+    <a href="{{ post.url }}">{{ post.data.title }}</a>
+    <time datetime="{{ post.date | isoDate }}">{{ post.date | readableDate }}</time>
+  </li>
+  {%- endfor %}
+</ul>

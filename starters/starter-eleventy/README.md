@@ -16,23 +16,50 @@
 
 ## Features
 
-- Eleventy 3
-- Markdown content with Nunjucks layouts
-- Builds `src` to `_site` — no client-side JavaScript
-- Ready for production deployment
+- Eleventy 3 with an ESM config (`eleventy.config.js`)
+- Markdown and Nunjucks content with a base layout, a post layout and partials
+- A `posts` collection set up by directory data, listed newest first on the home page
+- Site-wide data in `src/_data/site.json`, CSS copied through from `src/assets`
+- Builds `src` to `_site`, no client-side JavaScript
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    content["src/*.md, src/posts/*.md"] --> eleventy["Eleventy"]
+    layouts["src/_includes (layouts, partials)"] --> eleventy
+    data["src/_data/site.json"] --> eleventy
+    eleventy --> site["_site/ (static HTML)"]
+    site -->|served by| lc["Light Cloud CDN"]
+```
+
+## Project structure
+
+```text
+.
+├── eleventy.config.js        # Input/output folders, passthrough copy, date filters
+└── src/
+    ├── _data/site.json       # Site title and description
+    ├── _includes/
+    │   ├── layouts/          # base.njk, post.njk
+    │   └── partials/         # header.njk, footer.njk
+    ├── assets/css/main.css   # Copied to _site/assets as is
+    ├── posts/
+    │   ├── posts.json        # Layout, tag and URL for every post in the folder
+    │   └── *.md              # Posts
+    ├── index.njk             # Home page with the post list
+    └── about.md              # /about/
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+npm install       # install dependencies
+npm run dev       # dev server with live reload on http://localhost:8080
+npm run build     # static build into _site/
 ```
+
+To add a post, create a Markdown file in `src/posts/` with a `title` and a `date`.
 
 ## Deploy to Light Cloud
 
@@ -70,6 +97,10 @@ Your site will be available at `https://your-app.light-cloud.io`
 
 - [Eleventy documentation](https://www.11ty.dev/docs/)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 

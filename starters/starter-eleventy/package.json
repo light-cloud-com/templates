@@ -1,6 +1,7 @@
 {
   "name": "starter-eleventy",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "eleventy",
     "dev": "eleventy --serve"
