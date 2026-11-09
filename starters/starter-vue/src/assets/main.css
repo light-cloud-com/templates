@@ -1,8 +1,14 @@
 :root {
+  --text: #213547;
+  --muted: #666;
+  --border: #eaeaea;
+  --accent: #42b883;
+  --accent-hover: #33a06f;
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #213547;
+  color: var(--text);
   background-color: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -16,16 +22,22 @@
   box-sizing: border-box;
 }
 
-body {
-  min-height: 100vh;
-  display: flex;
-  place-items: center;
-  justify-content: center;
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+p {
+  margin: 1rem 0;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  background: #f0f0f0;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
 }

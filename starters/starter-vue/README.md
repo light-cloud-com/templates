@@ -16,23 +16,55 @@
 
 ## Features
 
-- Vue 3 with the Composition API
-- Vite for fast development and optimized builds
-- Single-file components
-- Ready for production deployment
+- Vue 3 with the Composition API and `<script setup>`
+- Client-side routing with Vue Router (Home, About, 404), lazy-loaded views
+- Layout component, scoped styles per component, global styles in `src/assets`
+- ESLint (flat config with eslint-plugin-vue) and Vitest with Vue Test Utils
+- `VITE_` environment variables, with an `.env.example`
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    src["src/ (Vue SFCs)"] -->|npm run build| vite["Vite"]
+    vite --> dist["dist/ (static files)"]
+    dist -->|served by| lc["Light Cloud CDN"]
+    lc -->|unknown paths fall back to index.html| router["Vue Router"]
+```
+
+## Project structure
+
+```text
+.
+├── index.html                # HTML entry, loads src/main.js
+├── public/                   # Copied as is into dist/
+├── src/
+│   ├── main.js               # Creates the app and installs the router
+│   ├── App.vue               # Layout + RouterView
+│   ├── assets/main.css       # Design tokens and base styles
+│   ├── components/           # CounterButton (+ __tests__/)
+│   ├── layouts/              # DefaultLayout (header, nav, footer)
+│   ├── router/index.js       # Route table
+│   └── views/                # HomeView, AboutView, NotFoundView
+├── .env.example              # VITE_ variables
+├── eslint.config.js
+└── vite.config.js            # Vite and Vitest config, @ alias for src/
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+npm install       # install dependencies
+npm run dev       # start the dev server on http://localhost:5173
+npm run lint      # ESLint
+npm test          # Vitest
+npm run build     # production build into dist/
+npm run preview   # serve the production build locally
 ```
+
+## Environment variables
+
+Copy `.env.example` to `.env.local`. Only variables that start with `VITE_` reach the browser, and they are baked in at build time, so never put secrets in them. On Light Cloud, set them in the app's environment variables and redeploy.
 
 ## Deploy to Light Cloud
 
@@ -71,6 +103,10 @@ Your app will be available at `https://your-app.light-cloud.io`
 - [Vue documentation](https://vuejs.org)
 - [Vite documentation](https://vite.dev)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 
