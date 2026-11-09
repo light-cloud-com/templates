@@ -8,8 +8,10 @@ A small REST API for one resource, `items`, built with ASP.NET Core minimal API 
 
 ```mermaid
 flowchart LR
-    client["Client (browser, curl, app)"] -->|HTTPS JSON| api["ASP.NET Core API"]
-    api -->|SQL over TLS| db[("PostgreSQL<br/>items table")]
+    client["Client (browser, curl, app)"] -->|HTTPS JSON| endpoints["ItemEndpoints<br/>(minimal API)"]
+    endpoints --> repo["ItemRepository"]
+    repo -->|SQL over TLS| db[("PostgreSQL<br/>items table")]
+    options["DatabaseOptions<br/>(DB_* settings)"] -.-> repo
 ```
 
 The app creates the `items` table when it starts, so there is no migration step. On Light Cloud the database connection is set for you; the app listens on `PORT`.
@@ -29,6 +31,27 @@ The app creates the `items` table when it starts, so there is no migration step.
 
 An item is `{ "id", "name", "description", "created_at", "updated_at" }`. `name` is required (1 to 200 characters); `description` is optional. Errors are JSON `{ "error": "..." }`: `400` for invalid input, `404` for an unknown item.
 
+## Project structure
+
+```
+.
+├── CrudApi.csproj        web project (the one Light Cloud builds and publishes)
+├── CrudApi.slnx          solution: web project + tests
+├── Program.cs            services, error handling, endpoint mapping
+├── appsettings.json
+├── Data/
+│   ├── DatabaseOptions.cs                       DB_* settings -> connection string
+│   ├── DatabaseServiceCollectionExtensions.cs   AddDatabase(): options + NpgsqlDataSource
+│   └── ItemRepository.cs                        CREATE TABLE and the item SQL
+├── Endpoints/
+│   ├── RootEndpoints.cs  GET / and GET /health
+│   └── ItemEndpoints.cs  /items
+├── Models/               Item, ItemInput (validation), PageRequest (limit/offset)
+└── tests/CrudApi.Tests/  xUnit tests, no database needed
+```
+
+The web project stays at the root so `dotnet run` works there and Light Cloud finds it first; its `DefaultItemExcludes` keeps `tests/` out of it.
+
 ## Run locally
 
 You need .NET 10 SDK and Docker (for the database).
@@ -39,7 +62,13 @@ export DB_HOST=localhost DB_NAME=postgres DB_USER=postgres DB_PASSWORD=postgres 
 dotnet run
 ```
 
-The API is now on http://localhost:8080.
+The API is now on http://localhost:8080. `.env.example` lists the same variables.
+
+Run the tests:
+
+```bash
+dotnet test
+```
 
 ## Try it
 
@@ -66,7 +95,7 @@ On Light Cloud, use your app's URL instead of http://localhost:8080.
 
 ## Make it yours
 
-The code is in `Program.cs`. Rename `items`, add columns to the `CREATE TABLE` statement and the validation, and push: Light Cloud redeploys on every push.
+Add a column to the `CREATE TABLE` statement and the SQL in `Data/ItemRepository.cs`, to `Models/Item.cs` and to the validation in `Models/ItemInput.cs`. A new resource gets its own model, repository and `Endpoints/*Endpoints.cs`, registered in `Program.cs`. Push, and Light Cloud redeploys.
 
 ## License
 
