@@ -1,116 +1,150 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# Angular 21 Starter
 
-<h1 align="center">Angular Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![Angular 21](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)](https://angular.dev) [![TypeScript 5.9](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![Tests: Vitest](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](src/app) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/angular-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/angular-starter)
 
-<p align="center">
-  An Angular application with standalone components, ready to deploy on Light Cloud.
-</p>
+An Angular 21 starter built with the Angular CLI: a single-page app with standalone components, signals and the Angular Router, with a home page, an about page and a 404 page. It is a small TypeScript boilerplate for developers who want a clean Angular project with lazy-loaded routes, strict type checking, Prettier and Vitest unit tests already set up. It builds to static files that any static host serves, and deploys to Light Cloud in one click.
 
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-angular"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
+## Screenshot
 
----
+<img alt="Angular 21 Starter: home page with a click counter and Home and About navigation" src="docs/screenshots/home-light.png" width="100%">
+<img alt="Angular 21 Starter: about page explaining where routes, pages and components live" src="docs/screenshots/about-light.png" width="100%">
 
 ## Features
 
-- Angular 21 with standalone components and signals, scaffolded with `ng new`
-- Router with lazy-loaded pages (Home, About, 404) and a shared layout shell
-- Component styles next to each component, global tokens in `src/styles.css`
-- Unit tests with Vitest through the Angular CLI (`ng test`)
-- TypeScript strict mode and Prettier
+- Angular 21 with standalone components (no NgModules) and signals
+- The Angular CLI application builder (`@angular/build`) for `ng serve` and `ng build`
+- Angular Router with every page lazy-loaded through `loadComponent`, and page titles per route
+- A layout shell in `App` (header, navigation, footer) around `<router-outlet />`
+- Component styles next to each component, design tokens in `src/styles.css`
+- Unit tests with Vitest through `ng test`, for the app shell and the counter
+- TypeScript strict mode and strict Angular template checks, Prettier config
+- Production budgets: a warning at 500 kB initial bundle, an error at 1 MB
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    src["src/ (TypeScript + templates)"] -->|npm run build| cli["Angular CLI"]
-    cli --> dist["dist/browser/ (static files)"]
-    dist -->|served by| lc["Light Cloud CDN"]
-    lc -->|unknown paths fall back to index.html| router["Angular Router"]
+You need Node.js 20.19, 22.12 or later (Angular 21 requires it) and npm.
+
+```bash
+git clone https://github.com/light-cloud-templates/angular-starter.git
+cd angular-starter
+npm install
+npm start
 ```
+
+Open <http://localhost:4200>. Edit `src/app/pages/home/home.ts` and the page reloads as you save.
+
+Other ways to start:
+
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/angular-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/angular-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/angular-starter)
+
+The Deploy button copies this template into your GitHub account and creates a static site: Light Cloud runs `npm run build` and serves the `dist/browser/` folder from a CDN. Paths that are not files, such as `/about`, fall back to `index.html`, so the Angular Router handles them.
+
+There are no secrets to fill in. Every push to the default branch deploys again. Static sites run on the Free plan.
+
+### Deploy anywhere else
+
+This is a standard Angular CLI app with no Light Cloud code in it. Run `npm run build` and upload `dist/browser/` to any static file host (Netlify, Cloudflare Pages, Firebase Hosting, S3 with CloudFront, nginx). Because the app uses client-side routing, configure the host to serve `index.html` for paths that do not match a file, or `/about` returns a 404 on reload.
 
 ## Project structure
 
 ```text
 .
-├── angular.json                # CLI workspace config (builds into dist/browser)
-├── public/                     # Static assets, copied as is
-└── src/
-    ├── index.html
-    ├── main.ts                 # Bootstraps App with appConfig
-    ├── styles.css              # Design tokens and base styles
-    └── app/
-        ├── app.ts|html|css     # Layout shell: header, nav, router outlet, footer
-        ├── app.config.ts       # Providers (router, error listeners)
-        ├── app.routes.ts       # Route table, pages loaded lazily
-        ├── components/counter/ # Shared component and its test
-        └── pages/              # home, about, not-found
+├── angular.json                # CLI workspace: build into dist/, budgets, test builder
+├── public/                     # favicon and static assets, copied as is
+├── src/
+│   ├── index.html              # HTML entry with <app-root>
+│   ├── main.ts                 # bootstraps App with appConfig
+│   ├── styles.css              # design tokens and base styles
+│   └── app/
+│       ├── app.ts              # layout shell component
+│       ├── app.html            # header, navigation, router outlet, footer
+│       ├── app.css             # shell styles
+│       ├── app.spec.ts         # tests the shell renders the navigation
+│       ├── app.config.ts       # providers: router, global error listeners
+│       ├── app.routes.ts       # route table, pages loaded lazily
+│       ├── components/counter/ # signal counter and its test
+│       └── pages/              # home, about, not-found
+├── tsconfig.json               # strict TypeScript and Angular compiler options
+├── tsconfig.app.json           # app build
+├── tsconfig.spec.json          # unit tests
+└── .prettierrc                 # Prettier settings
 ```
 
-## Local development
+## Pages
+
+| Path | File | What it shows |
+| --- | --- | --- |
+| `/` | `src/app/pages/home/home.ts` | Welcome text and a click counter |
+| `/about` | `src/app/pages/about/about.ts` | Where routes, pages and components live |
+| any other path | `src/app/pages/not-found/not-found.ts` | "Page not found" with a link home |
+
+Routes and their browser tab titles are declared in `src/app/app.routes.ts`; links in the header are in `src/app/app.html`.
+
+## Environment variables
+
+This template reads no environment variables. The app title is the `title` field in `src/app/app.ts`.
+
+## Testing
 
 ```bash
-npm install                 # install dependencies
-npm start                   # dev server on http://localhost:4200
-npm test -- --watch=false   # unit tests (Vitest), once
-npm run build               # production build into dist/browser
+npm test -- --watch=false   # Vitest through ng test, runs once
+npm run build               # production build into dist/browser/, checks the budgets
 ```
 
-## Deploy to Light Cloud
+`npm test` on its own can stay in watch mode in a terminal. The tests run in jsdom, so no browser is needed. There is no lint script; add one with `ng add angular-eslint`.
 
-### 1. Create an Account
+## How it works
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+```mermaid
+flowchart LR
+    src["src/ TypeScript + templates"] -->|npm run build| cli["Angular CLI<br/>application builder"]
+    cli --> dist["dist/browser/ static files"]
+    dist -->|served by| cdn["Light Cloud CDN"]
+    cdn -->|"unknown paths: index.html"| router["Angular Router<br/>loads the page chunk"]
+```
 
-### 2. Create New Application
+The CLI compiles the app ahead of time into `dist/browser/`. The browser loads `index.html` and the main bundle once; each route's component is its own chunk, fetched when the route is first visited.
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Static Site"** as the deployment type
-3. Choose **"Angular"** as the framework
+## FAQ
 
-### 3. Connect Repository
+### How do I add a new page in Angular?
 
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
+Run `npx ng generate component pages/contact`, then add `{ path: 'contact', title: 'Contact', loadComponent: () => import('./pages/contact/contact').then((m) => m.Contact) }` to `src/app/app.routes.ts` and a `<a routerLink="/contact">` link in `src/app/app.html`.
 
-### 4. Configure Build Settings
+### Why does my Angular route show a 404 after a refresh?
 
-Light Cloud will auto-detect your settings, but you can verify:
+The host is looking for a file called `/about` and has none. Configure it to serve `index.html` for unknown paths (a rewrite or SPA fallback). Light Cloud does this for you.
 
-| Setting | Value |
-|---------|-------|
-| Build Command | `npm run build` |
-| Output Directory | `dist/browser` |
+### How do I add environment settings to an Angular app?
 
-### 5. Deploy
+Run `npx ng generate environments` to create `src/environments/` with a development and a production file, then import from `environments/environment`. Values are compiled into the bundle, so never put secrets in them.
 
-Click **"Deploy"** and your app will be live in seconds!
+### Can I deploy it without Light Cloud?
 
-Your app will be available at `https://your-app.light-cloud.io`
+Yes. Run `npm run build` and serve `dist/browser/` from any static file host, with a fallback to `index.html` for client-side routes.
 
-## Learn More
+### Does it use NgModules or Karma?
 
-This starter began as the output of `ng new`, with routing and pages added following the [Angular style guide](https://angular.dev/style-guide).
+Neither. Every component is standalone, and `ng test` runs the specs with Vitest, the default test runner for new Angular CLI projects.
 
-- [Angular documentation](https://angular.dev)
-- [Angular CLI reference](https://angular.dev/tools/cli)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+## Related templates
 
-## License
+- [react-vite-starter](https://github.com/light-cloud-templates/react-vite-starter): the same app in React and Vite
+- [vue-vite-starter](https://github.com/light-cloud-templates/vue-vite-starter): the same app in Vue 3 and Vite
+- [solidjs-vite-starter](https://github.com/light-cloud-templates/solidjs-vite-starter): the same app in SolidJS and TypeScript
+- [nestjs-api-starter](https://github.com/light-cloud-templates/nestjs-api-starter): a TypeScript API with Angular-style modules and decorators
 
-[MIT](./LICENSE)
+## Licence
+
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
