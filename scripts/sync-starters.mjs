@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// Copies every template in catalogue.json from its own repository into its
-// folder, records the commit it copied, and rewrites the catalogue in README.md.
+// Copies every template in catalogue.json that has its own repository into
+// its folder, records the commit it copied, and rewrites the catalogue in README.md.
 //
-// shortcut: the gallery still deploys from each template's own repository, so
-// that repository is the source and this folder is a copy. Once the platform
-// copies a single folder of this repository at deploy, make this the source
-// and turn the script around.
+// Templates without `repo` live only here. For the others the gallery still
+// deploys from their own repository, so that repository is the source and this
+// folder is a copy. Once the platform copies a single folder of this
+// repository at deploy, move them here too and drop their `repo`.
 //
 // Usage: node scripts/sync-starters.mjs [slug ...]   (no slug: all of them)
 
@@ -22,7 +22,7 @@ const only = new Set(process.argv.slice(2));
 const git = (args, cwd) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
 
 for (const entry of catalogue) {
-  if (only.size && !only.has(entry.slug)) continue;
+  if (!entry.repo || (only.size && !only.has(entry.slug))) continue;
   const work = mkdtempSync(join(tmpdir(), 'lc-template-'));
   try {
     git(['clone', '--quiet', '--depth', '1', `https://github.com/${entry.repo}.git`, work]);
@@ -47,10 +47,13 @@ for (const entry of catalogue) {
 writeFileSync(cataloguePath, JSON.stringify(catalogue, null, 2) + '\n');
 
 // The catalogue table in README.md, between the two markers.
-const deployUrl = (repo) => `https://console.light-cloud.com/new?repo=https://github.com/${repo}`;
+const deployUrl = (t) =>
+  t.repo
+    ? `https://console.light-cloud.com/new?repo=https://github.com/${t.repo}`
+    : `https://console.light-cloud.com/new?template=${t.slug}`;
 const rows = catalogue.map(
   (t) =>
-    `| [${t.name}](./${t.folder}) | ${t.description} | ${t.language} | ${t.database ? 'PostgreSQL' : ''} | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](${deployUrl(t.repo)}) |`
+    `| [${t.name}](./${t.folder}) | ${t.description} | ${t.language} | ${t.database ? 'PostgreSQL' : ''} | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](${deployUrl(t)}) |`
 );
 const table = [
   '<!-- catalogue:start (written by scripts/sync-starters.mjs) -->',

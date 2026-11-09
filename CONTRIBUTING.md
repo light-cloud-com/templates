@@ -19,7 +19,7 @@ A good template:
 
 ## Improve one of ours
 
-Templates under `starters/` are copies of their own repositories (`light-cloud-com/starter-*`), so open issues and pull requests there. Maintainers refresh this repository with:
+Templates without a `repo` in `catalogue.json` live only here: open issues and pull requests in this repository. The rest are copies of their own repositories (`light-cloud-com/starter-*`), so change them there. Maintainers refresh the copies with:
 
 ```bash
 node scripts/sync-starters.mjs            # every template

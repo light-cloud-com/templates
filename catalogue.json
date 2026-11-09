@@ -308,9 +308,7 @@
     "name": "Express CRUD API",
     "description": "REST API for items on PostgreSQL, built with Express 5 and pg",
     "language": "JavaScript",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-express",
-    "commit": "40235f22a969e2adf70e130bfe03ccfea708819f"
+    "database": true
   },
   {
     "folder": "starters/crud-api-fastapi",
@@ -318,9 +316,7 @@
     "name": "FastAPI CRUD API",
     "description": "REST API for items on PostgreSQL, built with FastAPI and psycopg 3",
     "language": "Python",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-fastapi",
-    "commit": "6168c4ff48a213c8454e017d9392d3810d2f042c"
+    "database": true
   },
   {
     "folder": "starters/crud-api-nestjs",
@@ -328,9 +324,7 @@
     "name": "NestJS CRUD API",
     "description": "REST API for items on PostgreSQL, built with NestJS and pg",
     "language": "JavaScript",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-nestjs",
-    "commit": "d618f13537eaa16c4209305ff0c630ae66def029"
+    "database": true
   },
   {
     "folder": "starters/crud-api-hono",
@@ -338,9 +332,7 @@
     "name": "Hono CRUD API",
     "description": "REST API for items on PostgreSQL, built with Hono on Node and postgres.js",
     "language": "JavaScript",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-hono",
-    "commit": "8237ae51bb542e91c2bcd3a6a609dd3d3ed8bc1c"
+    "database": true
   },
   {
     "folder": "starters/crud-api-gin",
@@ -348,9 +340,7 @@
     "name": "Gin CRUD API",
     "description": "REST API for items on PostgreSQL, built with Gin and pgx",
     "language": "Go",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-gin",
-    "commit": "ccf356ea688e5b17d68e252e1ca1470982b4ab48"
+    "database": true
   },
   {
     "folder": "starters/crud-api-spring-boot",
@@ -358,9 +348,7 @@
     "name": "Spring Boot CRUD API",
     "description": "REST API for items on PostgreSQL, built with Spring Boot and JDBC",
     "language": "Java",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-spring-boot",
-    "commit": "d24ef9a5156a63cf0973716b64acc982755937a8"
+    "database": true
   },
   {
     "folder": "starters/crud-api-aspnet",
@@ -368,9 +356,7 @@
     "name": "ASP.NET Core CRUD API",
     "description": "REST API for items on PostgreSQL, built with ASP.NET Core minimal API and Npgsql",
     "language": ".NET",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-aspnet",
-    "commit": "d489b99629ba83d87ab6ef03fc921cea3a06c7b0"
+    "database": true
   },
   {
     "folder": "starters/crud-api-django",
@@ -378,9 +364,7 @@
     "name": "Django CRUD API",
     "description": "REST API for items on PostgreSQL, built with Django REST framework",
     "language": "Python",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-django",
-    "commit": "b4da1f4ee4cb78eaf15732316a94ba2bb3de8c0c"
+    "database": true
   },
   {
     "folder": "starters/crud-api-flask",
@@ -388,8 +372,6 @@
     "name": "Flask CRUD API",
     "description": "REST API for items on PostgreSQL, built with Flask and psycopg 3",
     "language": "Python",
-    "database": true,
-    "repo": "light-cloud-com/starter-crud-api-flask",
-    "commit": "6f5e2041b91861b41b53a0ba511d6250d381d7bf"
+    "database": true
   }
 ]
