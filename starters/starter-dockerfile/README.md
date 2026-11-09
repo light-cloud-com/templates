@@ -17,15 +17,45 @@
 ## Features
 
 - Bring your own Dockerfile — any language, any runtime
-- A small Node.js server included as a working example, ready to replace
+- A small, dependency-free Node.js server included as a working example, ready to replace
+- Runs as the image's unprivileged `node` user and shuts down cleanly on `SIGTERM`
+- Tests with the built-in Node test runner
 - Listens on `$PORT`, which is what Cloud Run sends traffic to
 - Docker-ready for Cloud Run
+
+## How it works
+
+```mermaid
+flowchart LR
+    repo["Your repository<br/>Dockerfile at the root"] -->|docker build| image["Container image"]
+    image -->|runs on| run["Light Cloud container"]
+    client["Client"] -->|HTTPS| run
+    run -->|PORT| server["src/server.js"]
+```
+
+Light Cloud builds the `Dockerfile` at the root of the repository exactly as it is, then runs the image and sends traffic to `$PORT`.
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/` | Welcome message |
+| GET | `/health` | Health check with uptime |
+
+## Project structure
+
+```text
+.
+├── Dockerfile              # How the image is built and started
+├── .dockerignore           # Files kept out of the image
+├── src/
+│   ├── server.js           # Starts the HTTP server, shuts down on SIGTERM
+│   ├── app.js              # Request handler: / and /health
+│   └── config.js           # Settings read from the environment
+├── test/
+│   └── app.test.js         # node:test tests against the handler
+└── .env.example            # Environment variables the app reads
+```
 
 ## Local Development
 
@@ -35,9 +65,12 @@ docker build -t my-app .
 
 # Run it
 docker run -p 8080:8080 -e PORT=8080 my-app
+
+# Run the tests (Node.js 22 or newer)
+node --test
 ```
 
-Replace `server.js` and the `Dockerfile` with your own — the only requirement is
+Replace `src/` and the `Dockerfile` with your own — the only requirement is
 that the container listens on `$PORT`.
 
 ## Deploy to Light Cloud

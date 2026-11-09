@@ -1,4 +1,9 @@
 .git
 .gitignore
 .env
+.env.*
 node_modules
+test
+README.md
+LICENSE
+logo.png
