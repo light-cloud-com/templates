@@ -18,8 +18,19 @@
 
 - Fastify 5 with structured logging
 - Binds `0.0.0.0` rather than Fastify's localhost default, which is unreachable from outside the container
-- REST API with health check endpoint
+- Routes as Fastify plugins, app built separately from the server so tests call it with `app.inject()`
+- Graceful shutdown on `SIGTERM`
+- Tests with the built-in Node test runner, no extra dependencies
 - Listens on `$PORT`, defaulting to 3000
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| server["src/server.js<br/>listens on PORT, logs"]
+    server --> app["src/app.js<br/>buildApp()"]
+    app --> routes["src/routes/root.js<br/>/ and /health"]
+```
 
 ## API Endpoints
 
@@ -28,7 +39,25 @@
 | GET | `/` | Welcome message and API info |
 | GET | `/health` | Health check with uptime |
 
+## Project structure
+
+```text
+.
+├── src/
+│   ├── app.js              # buildApp(): creates Fastify and registers routes
+│   ├── server.js           # Starts the server, shuts down on SIGTERM
+│   ├── config.js           # Settings read from the environment
+│   └── routes/
+│       └── root.js         # GET / and GET /health, as a Fastify plugin
+├── test/
+│   └── app.test.js         # node:test tests using app.inject()
+├── .env.example            # Environment variables the app reads
+└── package.json
+```
+
 ## Local Development
+
+You need Node.js 22 or newer.
 
 ```bash
 # Install dependencies
@@ -39,9 +68,12 @@ npm start
 
 # Start with file watching
 npm run dev
+
+# Run the tests
+npm test
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be available at `http://localhost:3000`. `.env.example` lists the environment variables the app reads.
 
 ## Deploy to Light Cloud
 
