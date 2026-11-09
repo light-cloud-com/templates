@@ -12,10 +12,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+# Dependencies first so their layer is cached between builds.
 COPY composer.json composer.lock* ./
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --no-autoloader --no-scripts
 
 COPY . .
+RUN composer dump-autoload --no-dev --optimize
 
 RUN chown -R www-data:www-data /var/www/html
 

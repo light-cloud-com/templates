@@ -16,10 +16,23 @@
 
 ## Features
 
-- Slim Framework 4
-- PSR-7 HTTP message interfaces
-- REST API with health check endpoint
+- Slim Framework 4 with PSR-7 HTTP messages
+- PSR-4 autoloading: invokable action classes in `src/`, app bootstrap and routes in `config/`
+- `public/index.php` front controller, so only `public/` is served
+- Error details off unless `APP_DEBUG=true`
+- PHPUnit tests that send requests through the app, no web server needed
 - Docker-ready for Cloud Run
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| apache["Apache<br/>public/.htaccess"]
+    apache --> index["public/index.php"]
+    index --> bootstrap["config/bootstrap.php<br/>middleware + routes"]
+    bootstrap --> home["HomeAction<br/>GET /"]
+    bootstrap --> health["HealthAction<br/>GET /health"]
+```
 
 ## API Endpoints
 
@@ -28,14 +41,39 @@
 | GET | `/` | Welcome message and API info |
 | GET | `/health` | Health check with uptime |
 
+## Project structure
+
+```
+.
+├── composer.json, composer.lock
+├── phpunit.xml.dist
+├── Dockerfile
+├── config
+│   ├── bootstrap.php     builds the Slim app (used by index.php and the tests)
+│   ├── routes.php        URL -> action
+│   └── settings.php      settings from the environment
+├── public
+│   ├── .htaccess         sends every request to index.php
+│   └── index.php         front controller
+├── src/Action/           HomeAction, HealthAction (namespace App\Action)
+└── tests/Action/         PHPUnit tests (namespace Tests\Action)
+```
+
+Add an endpoint as a new class in `src/Action/` and a line in `config/routes.php`.
+
 ## Local Development
+
+You need PHP 8.2 or newer and Composer.
 
 ```bash
 # Install dependencies
 composer install
 
 # Run with PHP built-in server
-php -S localhost:8080 -t public
+composer start
+
+# Run the tests
+composer test
 ```
 
 The API will be available at `http://localhost:8080`
