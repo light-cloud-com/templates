@@ -1,6 +1,6 @@
-module github.com/light-cloud-com/starter-fiber
+module starter-fiber
 
-go 1.22.1
+go 1.25.0
 
 require github.com/gofiber/fiber/v2 v2.52.14
 

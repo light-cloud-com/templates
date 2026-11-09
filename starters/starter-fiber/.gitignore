@@ -1,4 +1,17 @@
-# Binaries
-/starter-*
+# Build output
+/bin/
+/main
+/starter-fiber
 *.exe
+
+# Test and coverage output
+*.test
+*.out
+
+# Local settings
 .env
+go.work
+go.work.sum
+.DS_Store
+.idea/
+.vscode/
