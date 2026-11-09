@@ -2,7 +2,7 @@
 
 A small REST API for one resource, `items`, built with Hono on Node.js and postgres.js. Deploy it with a PostgreSQL database in one click, then make it yours.
 
-[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://console.light-cloud.com/new?repo=https://github.com/light-cloud-com/starter-crud-api-hono)
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://console.light-cloud.com/new?template=crud-api-hono)
 
 ## How it works
 
