@@ -18,8 +18,21 @@
 
 - Express 4
 - CORS enabled and JSON body parsing
-- Unmatched routes answer in JSON rather than Express's HTML error page, so a client parsing responses gets the same shape from every route
+- Unmatched routes and errors answer in JSON rather than Express's HTML error page, so a client parsing responses gets the same shape from every route
+- App and server in separate files, so tests use the app without opening a port
+- Graceful shutdown on `SIGTERM`
+- Tests with the built-in Node test runner, no extra dependencies
 - Listens on `$PORT`, defaulting to 8080
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| server["src/server.js<br/>listens on PORT"]
+    server --> app["src/app.js<br/>CORS, JSON parsing"]
+    app --> routes["src/routes<br/>/ and /health"]
+    app --> errors["src/middleware/errors.js<br/>JSON 404 and errors"]
+```
 
 ## API Endpoints
 
@@ -28,7 +41,27 @@
 | GET | `/` | Welcome message and API info |
 | GET | `/health` | Health check with uptime |
 
+## Project structure
+
+```text
+.
+├── src/
+│   ├── app.js              # Express app: middleware, routes, error handling
+│   ├── server.js           # Starts the server, shuts down on SIGTERM
+│   ├── config.js           # Settings read from the environment
+│   ├── routes/
+│   │   └── index.js        # GET / and GET /health
+│   └── middleware/
+│       └── errors.js       # JSON 404 and error handler
+├── test/
+│   └── app.test.js         # node:test tests against the app
+├── .env.example            # Environment variables the app reads
+└── package.json
+```
+
 ## Local Development
+
+You need Node.js 22 or newer.
 
 ```bash
 # Install dependencies
@@ -39,9 +72,12 @@ npm start
 
 # Start with file watching
 npm run dev
+
+# Run the tests
+npm test
 ```
 
-The API will be available at `http://localhost:8080`
+The API will be available at `http://localhost:8080`. `.env.example` lists the environment variables the app reads.
 
 ## Deploy to Light Cloud
 
