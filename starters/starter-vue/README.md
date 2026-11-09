@@ -1,121 +1,153 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# Vue 3 Vite Starter
 
-<h1 align="center">Vue Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org) [![Vite 5](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)](https://vite.dev) [![Vue Router 4](https://img.shields.io/badge/Vue%20Router-4-4FC08D?logo=vuedotjs&logoColor=white)](https://router.vuejs.org) [![Tests: Vitest](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](src/components/__tests__) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/vue-vite-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/vue-vite-starter)
 
-<p align="center">
-  A modern Vue 3 application powered by Vite, ready to deploy on Light Cloud.
-</p>
+A Vue 3 starter built with Vite 5 and Vue Router 4: a single-page app with a shared layout, a home page, an about page and a 404 page, written with the Composition API and `<script setup>`. It is a small JavaScript boilerplate for developers who want a clean Vue project with scoped styles, ESLint and Vitest already set up, ready to add their own views. It builds to static files that any static host serves, and deploys to Light Cloud in one click.
 
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-vue"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
+## Screenshot
 
----
+<img alt="Vue 3 Vite Starter: home page with a click counter and Home and About navigation" src="docs/screenshots/home-light.png" width="100%">
+<img alt="Vue 3 Vite Starter: about page explaining where views, components and routes live" src="docs/screenshots/about-light.png" width="100%">
 
 ## Features
 
-- Vue 3 with the Composition API and `<script setup>`
-- Client-side routing with Vue Router (Home, About, 404), lazy-loaded views
-- Layout component, scoped styles per component, global styles in `src/assets`
-- ESLint (flat config with eslint-plugin-vue) and Vitest with Vue Test Utils
-- `VITE_` environment variables, with an `.env.example`
+- Vue 3 single-file components with the Composition API and `<script setup>`
+- Vite 5 for the dev server and the production build, with an `@` alias for `src/`
+- Vue Router 4 with HTML5 history: Home, About and a catch-all 404 view
+- About and 404 views are lazy-loaded, so each is its own chunk fetched on first visit
+- A `DefaultLayout` (header, navigation, footer) around every view
+- Scoped styles per component, design tokens and base styles in `src/assets/main.css`
+- ESLint flat config with eslint-plugin-vue, Vitest with Vue Test Utils
+- A `VITE_APP_TITLE` build-time variable, with an `.env.example`
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    src["src/ (Vue SFCs)"] -->|npm run build| vite["Vite"]
-    vite --> dist["dist/ (static files)"]
-    dist -->|served by| lc["Light Cloud CDN"]
-    lc -->|unknown paths fall back to index.html| router["Vue Router"]
+You need Node.js 20.19 or later (ESLint 10 requires it) and npm.
+
+```bash
+git clone https://github.com/light-cloud-templates/vue-vite-starter.git
+cd vue-vite-starter
+npm install
+npm run dev
 ```
+
+Open <http://localhost:5173>. Edit `src/views/HomeView.vue` and the page updates as you save.
+
+Other ways to start:
+
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/vue-vite-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/vue-vite-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/vue-vite-starter)
+
+The Deploy button copies this template into your GitHub account and creates a static site: Light Cloud runs `npm run build` and serves the `dist/` folder from a CDN. Paths that are not files, such as `/about`, fall back to `index.html`, so Vue Router handles them.
+
+There are no secrets to fill in. Every push to the default branch deploys again. Static sites run on the Free plan.
+
+### Deploy anywhere else
+
+This is a standard Vite app with no Light Cloud code in it. Run `npm run build` and upload `dist/` to any static file host (Netlify, Cloudflare Pages, GitHub Pages, S3 with CloudFront, nginx). The router uses HTML5 history mode, so configure the host to serve `index.html` for paths that do not match a file, or `/about` returns a 404 on reload.
 
 ## Project structure
 
 ```text
 .
-├── index.html                # HTML entry, loads src/main.js
-├── public/                   # Copied as is into dist/
+├── index.html                    # HTML entry, loads src/main.js
+├── public/                       # copied as is into dist/
 ├── src/
-│   ├── main.js               # Creates the app and installs the router
-│   ├── App.vue               # Layout + RouterView
-│   ├── assets/main.css       # Design tokens and base styles
-│   ├── components/           # CounterButton (+ __tests__/)
-│   ├── layouts/              # DefaultLayout (header, nav, footer)
-│   ├── router/index.js       # Route table
-│   └── views/                # HomeView, AboutView, NotFoundView
-├── .env.example              # VITE_ variables
-├── eslint.config.js
-└── vite.config.js            # Vite and Vitest config, @ alias for src/
+│   ├── main.js                   # creates the app and installs the router
+│   ├── App.vue                   # DefaultLayout around <RouterView />
+│   ├── assets/main.css           # design tokens and base styles
+│   ├── components/
+│   │   ├── CounterButton.vue     # the button on the home page
+│   │   └── __tests__/            # Vitest + Vue Test Utils
+│   ├── layouts/DefaultLayout.vue # header, navigation, footer
+│   ├── router/index.js           # route table
+│   └── views/                    # HomeView, AboutView, NotFoundView
+├── .env.example                  # VITE_ variables
+├── eslint.config.js              # ESLint flat config
+└── vite.config.js                # Vite and Vitest config, @ alias
 ```
 
-## Local development
+## Pages
 
-```bash
-npm install       # install dependencies
-npm run dev       # start the dev server on http://localhost:5173
-npm run lint      # ESLint
-npm test          # Vitest
-npm run build     # production build into dist/
-npm run preview   # serve the production build locally
-```
+| Path | File | What it shows |
+| --- | --- | --- |
+| `/` | `src/views/HomeView.vue` | Welcome text and a click counter |
+| `/about` | `src/views/AboutView.vue` | Where views, components and routes live (lazy-loaded) |
+| any other path | `src/views/NotFoundView.vue` | "Page not found" with a link home (lazy-loaded) |
+
+Routes are declared in `src/router/index.js`; links in the header are in `src/layouts/DefaultLayout.vue`.
 
 ## Environment variables
 
-Copy `.env.example` to `.env.local`. Only variables that start with `VITE_` reach the browser, and they are baked in at build time, so never put secrets in them. On Light Cloud, set them in the app's environment variables and redeploy.
+| Name | Required | Default | What it does |
+| --- | --- | --- | --- |
+| `VITE_APP_TITLE` | No | `Vue App` | Name shown in the header. |
 
-## Deploy to Light Cloud
+Copy `.env.example` to `.env.local` for local runs. Vite only exposes variables that start with `VITE_` to the browser, and it writes their values into the bundle at build time, so never put secrets in them. On Light Cloud, set them in the app's environment variables and deploy again.
 
-### 1. Create an Account
+## Testing
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+```bash
+npm test          # Vitest, runs once
+npm run lint      # ESLint
+npm run build     # production build into dist/
+npm run preview   # serves dist/ on http://localhost:4173
+```
 
-### 2. Create New Application
+The tests run in jsdom, so no browser is needed.
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Static Site"** as the deployment type
-3. Choose **"Vue"** as the framework
+## How it works
 
-### 3. Connect Repository
+```mermaid
+flowchart LR
+    src["src/ Vue SFCs"] -->|npm run build| vite["Vite + plugin-vue"]
+    vite --> dist["dist/ static files"]
+    dist -->|served by| cdn["Light Cloud CDN"]
+    cdn -->|"unknown paths: index.html"| router["Vue Router<br/>picks the view"]
+```
 
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
+Vite compiles the single-file components into `dist/`. The browser loads `index.html` and the main bundle once, then Vue Router swaps views and fetches lazy chunks as they are needed.
 
-### 4. Configure Build Settings
+## FAQ
 
-Light Cloud will auto-detect your settings, but you can verify:
+### How do I add a new page in a Vue 3 Vite app?
 
-| Setting | Value |
-|---------|-------|
-| Build Command | `npm run build` |
-| Output Directory | `dist` |
+Create a view in `src/views/`, add `{ path: '/contact', name: 'contact', component: () => import('@/views/ContactView.vue') }` to the routes in `src/router/index.js`, and add a `<RouterLink to="/contact">` in `src/layouts/DefaultLayout.vue`.
 
-### 5. Deploy
+### Why does my Vue Router page show a 404 after a refresh?
 
-Click **"Deploy"** and your app will be live in seconds!
+HTML5 history mode needs the host to serve `index.html` for unknown paths. Add a rewrite or SPA fallback on your host. Light Cloud does this for you.
 
-Your app will be available at `https://your-app.light-cloud.io`
+### How do I use environment variables in Vue with Vite?
 
-## Learn More
+Add a line such as `VITE_API_URL=https://api.example.com` to `.env.local` and read it with `import.meta.env.VITE_API_URL`. Only `VITE_` names reach the browser, and the value is fixed when you build.
 
-- [Vue documentation](https://vuejs.org)
-- [Vite documentation](https://vite.dev)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+### Can I deploy it without Light Cloud?
 
-## License
+Yes. Run `npm run build` and serve `dist/` from any static file host, with a fallback to `index.html` for client-side routes.
 
-[MIT](./LICENSE)
+### Does it include Pinia or TypeScript?
+
+No, it keeps to Vue and Vue Router. Install `pinia` and call `app.use(createPinia())` in `src/main.js` when you need shared state; Vite already compiles `<script setup lang="ts">`; add `typescript` and `vue-tsc` when you want type checking.
+
+## Related templates
+
+- [react-vite-starter](https://github.com/light-cloud-templates/react-vite-starter): the same app in React and Vite
+- [solidjs-vite-starter](https://github.com/light-cloud-templates/solidjs-vite-starter): the same app in SolidJS and TypeScript
+- [svelte-vite-starter](https://github.com/light-cloud-templates/svelte-vite-starter): a single-page Svelte 5 app on Vite
+- [nuxt-ssr-starter](https://github.com/light-cloud-templates/nuxt-ssr-starter): Vue with server rendering in Nuxt
+- [angular-starter](https://github.com/light-cloud-templates/angular-starter): the same app in Angular
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
