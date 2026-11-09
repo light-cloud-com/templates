@@ -16,23 +16,53 @@
 
 ## Features
 
-- Astro 7, scaffolded with `create astro`
-- Prerendered to static HTML — no server needed
+- Astro 7, prerendered to static HTML, no server needed
 - Zero JavaScript shipped by default
-- Ready for production deployment
+- Blog powered by a content collection, with a typed frontmatter schema
+- Shared layout, header and footer components, global styles in one file
+- Home, About, Blog index, one page per post, and a 404 page
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    md["src/content/blog/*.md"] -->|content collection| astro["Astro build"]
+    pages["src/pages + layouts + components"] --> astro
+    astro --> dist["dist/ (static HTML)"]
+    dist -->|served by| lc["Light Cloud CDN"]
+```
+
+## Project structure
+
+```text
+.
+├── public/                    # Favicons, copied as is
+├── astro.config.mjs           # Static output (the default)
+└── src/
+    ├── content.config.ts      # Blog collection and its frontmatter schema
+    ├── content/blog/          # Posts in Markdown
+    ├── layouts/BaseLayout.astro
+    ├── components/            # Header, Footer, PostList, FormattedDate
+    ├── lib/posts.ts           # Published posts, newest first
+    ├── pages/
+    │   ├── index.astro        # Home with the latest posts
+    │   ├── about.astro
+    │   ├── 404.astro
+    │   └── blog/              # index.astro and [id].astro
+    ├── styles/global.css
+    └── consts.ts              # Site title and description
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+npm install       # install dependencies
+npm run dev       # dev server on http://localhost:4321
+npm run build     # static build into dist/
+npm run preview   # serve the build locally
 ```
+
+To add a post, create a Markdown file in `src/content/blog/` with a `title`, `description` and `pubDate`. Set `draft: true` to leave it out of the build.
 
 ## Deploy to Light Cloud
 
@@ -73,6 +103,10 @@ This starter is the output of `npm create astro@latest -- --template minimal`, w
 - [Astro documentation](https://docs.astro.build)
 - [Astro Discord](https://astro.build/chat)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 

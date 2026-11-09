@@ -1,0 +1,41 @@
+:root {
+  --text: #1f2933;
+  --muted: #5f6b7a;
+  --border: #e5e7eb;
+  --accent: #bc52ee;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text);
+  background: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+h1 {
+  font-size: 2.25rem;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  background: #f3f4f6;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+}

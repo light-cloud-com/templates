@@ -1,17 +1,18 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts } from '../lib/posts';
 
+const latest = (await getPosts()).slice(0, 3);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <h1>Welcome to Astro</h1>
+  <p>
+    Your site is ready to deploy on Light Cloud. Every page is prerendered to static HTML and ships
+    no JavaScript unless you add it.
+  </p>
+  <h2>Latest posts</h2>
+  <PostList posts={latest} />
+  <p><a href="/blog/">All posts</a></p>
+</BaseLayout>

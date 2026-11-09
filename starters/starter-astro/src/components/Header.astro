@@ -1,0 +1,51 @@
+---
+import { SITE_TITLE } from '../consts';
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/about/', label: 'About' },
+];
+const path = Astro.url.pathname;
+---
+
+<header>
+  <a class="brand" href="/">{SITE_TITLE}</a>
+  <nav aria-label="Main">
+    {
+      links.map(({ href, label }) => (
+        <a href={href} aria-current={path === href ? 'page' : undefined}>
+          {label}
+        </a>
+      ))
+    }
+  </nav>
+</header>
+
+<style>
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    font-weight: 700;
+    text-decoration: none;
+  }
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+  nav a[aria-current='page'],
+  nav a:hover {
+    color: var(--text);
+  }
+</style>
