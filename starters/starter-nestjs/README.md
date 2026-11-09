@@ -19,7 +19,20 @@
 - NestJS 11, scaffolded with `nest new`
 - TypeScript with decorators and dependency injection
 - Modular architecture — controllers, providers, modules
+- Settings read from the environment in one place (`src/config.ts`)
+- Graceful shutdown on `SIGTERM` through Nest's shutdown hooks
+- Unit tests and end-to-end tests with Jest and Supertest
 - Listens on `$PORT`, defaulting to 3000
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| main["main.ts<br/>bootstrap, listens on PORT"]
+    main --> module["AppModule"]
+    module --> controller["AppController<br/>GET /"]
+    controller --> service["AppService"]
+```
 
 ## API Endpoints
 
@@ -27,7 +40,31 @@
 |--------|----------|-------------|
 | GET | `/` | Welcome message |
 
+## Project structure
+
+```text
+.
+├── src/
+│   ├── main.ts                  # Bootstraps the app, enables shutdown hooks
+│   ├── config.ts                # Settings read from the environment
+│   ├── app.module.ts            # Root module
+│   ├── app.controller.ts        # GET /
+│   ├── app.service.ts           # Logic behind the controller
+│   └── app.controller.spec.ts   # Unit test
+├── test/
+│   ├── app.e2e-spec.ts          # End-to-end test over HTTP
+│   └── jest-e2e.json
+├── .env.example                 # Environment variables the app reads
+├── nest-cli.json
+├── tsconfig.json
+└── package.json
+```
+
+Add a feature with `npx nest generate resource <name>`: it creates a module, controller and service under `src/<name>/`.
+
 ## Local Development
+
+You need Node.js 22 or newer.
 
 ```bash
 # Install dependencies
@@ -38,9 +75,13 @@ npm run start:dev
 
 # Build and run for production
 npm run build && npm run start:prod
+
+# Run the unit and end-to-end tests
+npm test
+npm run test:e2e
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be available at `http://localhost:3000`. `.env.example` lists the environment variables the app reads.
 
 ## Deploy to Light Cloud
 
@@ -75,8 +116,6 @@ Click **"Deploy"** and your API will be live in minutes!
 Your API will be available at `https://your-app.light-cloud.io`
 
 ## Learn More
-
-This starter is the output of `nest new`, with only the changes noted above.
 
 - [NestJS documentation](https://docs.nestjs.com)
 - [Light Cloud documentation](https://docs.light-cloud.com)
