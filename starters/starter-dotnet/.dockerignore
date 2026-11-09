@@ -1,5 +1,6 @@
-bin
-obj
+**/bin
+**/obj
+tests
 .git
 .gitignore
 .env

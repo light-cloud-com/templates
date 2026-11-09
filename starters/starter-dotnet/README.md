@@ -17,9 +17,20 @@
 ## Features
 
 - ASP.NET Core minimal APIs on .NET 8
+- Endpoints grouped in extension classes, services registered in DI, `Program.cs` kept short
+- Settings through the options pattern (`appsettings.json`, overridable by environment variables)
+- xUnit tests that run the app in memory with `WebApplicationFactory`
 - CORS enabled
-- REST API with health check endpoint
 - Docker-ready for Cloud Run
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| endpoints["RootEndpoints<br/>GET / and GET /health"]
+    endpoints --> options["ApiInfoOptions<br/>(appsettings.json + environment)"]
+    endpoints --> uptime["Uptime<br/>(singleton)"]
+```
 
 ## API Endpoints
 
@@ -28,20 +39,37 @@
 | GET | `/` | Welcome message and API info |
 | GET | `/health` | Health check with uptime |
 
+## Project structure
+
+```
+.
+├── DotnetApi.csproj        web project (the Dockerfile publishes this one)
+├── DotnetApi.sln           solution: web project + tests
+├── Program.cs              services, middleware, endpoint mapping
+├── appsettings.json        logging and the "Api" section
+├── Dockerfile
+├── Endpoints/RootEndpoints.cs
+├── Services/               ApiInfoOptions, Uptime
+├── Properties/launchSettings.json
+└── tests/DotnetApi.Tests/  xUnit + WebApplicationFactory
+```
+
+The web project stays at the root so `dotnet run` works there; its `DefaultItemExcludes` keeps `tests/` out of it.
+
 ## Local Development
 
 ```bash
-# Restore dependencies
-dotnet restore
-
 # Run the application
 dotnet run
 
-# Build for release
-dotnet publish -c Release
+# Run the tests
+dotnet test
+
+# Build for release (what the Dockerfile does)
+dotnet publish DotnetApi.csproj -c Release
 ```
 
-The API will be available at `http://localhost:8080`
+The API will be available at `http://localhost:8080`. `.env.example` lists the settings you can override.
 
 ## Deploy to Light Cloud
 

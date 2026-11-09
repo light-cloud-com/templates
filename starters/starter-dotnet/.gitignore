@@ -16,3 +16,6 @@
 .vscode/*
 !.vscode/extensions.json
 .DS_Store
+
+# Local environment
+.env

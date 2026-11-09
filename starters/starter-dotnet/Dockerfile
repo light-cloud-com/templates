@@ -2,11 +2,12 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /app
 
-COPY *.csproj ./
-RUN dotnet restore
+# Restore first so the package layer is cached between builds.
+COPY DotnetApi.csproj ./
+RUN dotnet restore DotnetApi.csproj
 
 COPY . ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish DotnetApi.csproj -c Release -o out --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
