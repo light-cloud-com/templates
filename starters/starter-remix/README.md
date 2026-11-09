@@ -16,23 +16,58 @@
 
 ## Features
 
-- Remix v2 on Vite, scaffolded with `create-remix`
-- React 18 with server-side rendering
-- Nested routing with data loaders
+- Remix v2 on Vite, React 18 with server-side rendering, TypeScript
+- Root layout with a shared header component and a root `loader`
+- Home (with a `loader`), About and a resource route at `/api/health`
+- Tailwind CSS, ESLint and Vitest
 - Served by `remix-serve`
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    browser["Browser"] -->|HTTPS| server["Light Cloud container<br/>remix-serve on PORT"]
+    server --> routes["app/routes<br/>loaders run on the server, pages hydrate in the browser"]
+    server --> api["app/routes/api.health.ts<br/>JSON"]
+```
+
+## Project structure
+
+```text
+.
+├── app/
+│   ├── root.tsx                # Document, layout, root loader
+│   ├── components/SiteHeader.tsx
+│   ├── routes/
+│   │   ├── _index.tsx          # /
+│   │   ├── about.tsx           # /about
+│   │   └── api.health.ts       # GET /api/health -> {"status":"ok"}
+│   ├── entry.client.tsx
+│   ├── entry.server.tsx
+│   └── tailwind.css
+├── test/                       # Vitest tests (kept out of app/routes, where every file is a route)
+├── public/                     # Files served from /
+├── .env.example
+├── .eslintrc.cjs
+├── tailwind.config.ts
+└── vite.config.ts
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build and run for production
-npm run build && npm start
+npm install         # install dependencies
+npm run dev         # dev server on http://localhost:5173
+npm run lint        # ESLint
+npm run typecheck   # TypeScript
+npm test            # Vitest
+npm run build       # production build into build/
+npm start           # run the production server (honours PORT)
 ```
+
+## Environment variables
+
+Copy `.env.example` to `.env`. Remix reads `process.env` on the server only, in loaders and actions, when a request comes in; the root loader passes `SITE_NAME` to the header. Send the browser only what it needs through loader data, never secrets.
 
 ## Deploy to Light Cloud
 
@@ -68,10 +103,14 @@ Your app will be available at `https://your-app.light-cloud.io`
 
 ## Learn More
 
-This starter is the output of `create-remix`, with only the changes noted above.
+This starter began as `create-remix` output and adds the structure described above.
 
 - [Remix documentation](https://remix.run/docs)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 

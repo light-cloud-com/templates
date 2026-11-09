@@ -1,48 +1,33 @@
-import type { MetaFunction } from "@remix-run/node";
+import { json, type MetaFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Home | Remix App" },
+    { name: "description", content: "A Remix starter rendered on a server by Light Cloud." },
   ];
 };
 
+// Runs on the server for every request to /.
+export const loader = () => json({ renderedAt: new Date().toISOString() });
+
 export default function Index() {
+  const { renderedAt } = useLoaderData<typeof loader>();
+
   return (
-    <div className="font-sans p-4">
-      <h1 className="text-3xl">Welcome to Remix</h1>
-      <ul className="list-disc mt-4 pl-6 space-y-2">
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/quickstart"
-            rel="noreferrer"
-          >
-            5m Quick Start
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/tutorial"
-            rel="noreferrer"
-          >
-            30m Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/docs"
-            rel="noreferrer"
-          >
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <section className="space-y-4">
+      <h1 className="text-4xl font-bold">Welcome to Remix</h1>
+      <p>
+        This page is rendered on the server. Edit <code>app/routes/_index.tsx</code> and save to
+        see the change.
+      </p>
+      <p>
+        Rendered at <time>{renderedAt}</time>. The resource route at{" "}
+        <a className="text-blue-700 underline" href="/api/health">
+          /api/health
+        </a>{" "}
+        answers with JSON.
+      </p>
+    </section>
   );
 }
