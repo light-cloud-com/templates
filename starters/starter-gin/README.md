@@ -17,24 +17,55 @@
 ## Features
 
 - Gin 1.12
-- JSON responses with Gin's router and middleware
+- Structured JSON logs with `log/slog`, one line per request
+- Graceful shutdown on `SIGTERM`
+- Table-driven handler tests with `net/http/httptest`
 - Compiles to a single static binary
 - Listens on `$PORT`, defaulting to 8080
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| mw["Middleware<br/>requestLogger, gin.Recovery"]
+    mw --> router["Gin router<br/>internal/server"]
+    router --> handlers["Handlers<br/>/ and /health"]
+    main["main.go"] -.->|"reads PORT<br/>internal/config"| router
+```
+
+`main.go` only wires things together: it loads the config, builds the router and runs the server until Light Cloud (or Ctrl+C) asks it to stop.
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/` | Welcome message |
+| GET | `/health` | Health check |
+
+## Project structure
+
+```text
+.
+├── main.go                  # Entry point: config, logger, server, graceful shutdown
+├── internal/
+│   ├── config/              # Settings from environment variables
+│   └── server/              # Routes, handlers, middleware and their tests
+├── .env.example             # Local settings, copy to .env
+├── Makefile                 # make run, make test, make build
+└── go.mod
+```
+
+Code under `internal/` can only be imported by this module, which keeps the HTTP layer private to the app.
 
 ## Local Development
 
-```bash
-# Run the server
-go run main.go
+You need Go 1.25 or newer.
 
-# Build a binary
-go build -o server
+```bash
+cp .env.example .env   # optional, make run loads it
+make run               # or: go run .
+make test              # go vet ./... and go test ./...
+make build             # static binary in bin/server
 ```
 
 The API will be available at `http://localhost:8080`

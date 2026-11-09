@@ -1,4 +1,4 @@
-module github.com/light-cloud-com/starter-gin
+module starter-gin
 
 go 1.25.0
 
