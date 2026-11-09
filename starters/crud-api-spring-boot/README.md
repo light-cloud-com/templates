@@ -8,8 +8,11 @@ A small REST API for one resource, `items`, built with Spring Boot 4 and Spring 
 
 ```mermaid
 flowchart LR
-    client["Client (browser, curl, app)"] -->|HTTPS JSON| api["Spring Boot API"]
-    api -->|SQL over TLS| db[("PostgreSQL<br/>items table")]
+    client["Client (browser, curl, app)"] -->|HTTPS JSON| controller["ItemController"]
+    controller --> service["ItemService"]
+    service --> repo["ItemRepository<br/>(JdbcClient)"]
+    repo -->|SQL over TLS| db[("PostgreSQL<br/>items table")]
+    controller -. "invalid input, not found" .-> errors["ApiExceptionHandler<br/>{ error }"]
 ```
 
 The app creates the `items` table when it starts, so there is no migration step. On Light Cloud the database connection is set for you; the app listens on `PORT`.
@@ -29,6 +32,28 @@ The app creates the `items` table when it starts, so there is no migration step.
 
 An item is `{ "id", "name", "description", "created_at", "updated_at" }`. `name` is required (1 to 200 characters); `description` is optional. Errors are JSON `{ "error": "..." }`: `400` for invalid input, `404` for an unknown item.
 
+## Project structure
+
+```
+.
+├── pom.xml
+├── mvnw, mvnw.cmd, .mvn/               Maven wrapper
+└── src
+    ├── main
+    │   ├── java/com/example/items
+    │   │   ├── ItemsApplication.java
+    │   │   ├── item/                   ItemController, ItemService, ItemRepository,
+    │   │   │                           Item, ItemRequest (validated), ItemNotFoundException
+    │   │   ├── system/                 SystemController: GET / and GET /health
+    │   │   ├── common/                 ApiExceptionHandler: every error as { "error": "..." }
+    │   │   └── config/                 JsonConfig: numbers are not accepted as strings
+    │   └── resources
+    │       ├── application.properties  database, port and JSON settings (from the environment)
+    │       └── schema.sql              CREATE TABLE IF NOT EXISTS, run on every start
+    └── test/java/com/example/items
+        └── item/ItemControllerTest.java   @WebMvcTest, no database needed
+```
+
 ## Run locally
 
 You need Java 21 and Docker (for the database).
@@ -39,7 +64,13 @@ export DB_HOST=localhost DB_NAME=postgres DB_USER=postgres DB_PASSWORD=postgres 
 ./mvnw spring-boot:run
 ```
 
-The API is now on http://localhost:8080.
+The API is now on http://localhost:8080. `.env.example` lists the same variables.
+
+Run the tests (they mock the service, so no database is needed):
+
+```bash
+./mvnw test
+```
 
 ## Try it
 
@@ -66,7 +97,7 @@ On Light Cloud, use your app's URL instead of http://localhost:8080.
 
 ## Make it yours
 
-The API is in `src/main/java/com/example/items/` and the table in `src/main/resources/schema.sql`. Add a column to both and push: Light Cloud redeploys on every push.
+Each resource is a package under `src/main/java/com/example/items/`: copy `item/` to add another. To add a column, change `schema.sql`, the `Item` and `ItemRequest` records and the SQL in `ItemRepository`, then push: Light Cloud redeploys on every push.
 
 ## License
 
