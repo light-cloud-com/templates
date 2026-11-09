@@ -1,125 +1,144 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# Fastify REST API Starter (Node.js)
 
-<h1 align="center">Fastify API Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![Fastify 5](https://img.shields.io/badge/Fastify-5-000000?logo=fastify&logoColor=white)](https://fastify.dev) [![Node.js 22](https://img.shields.io/badge/Node.js-22-5FA04E?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![Tests: node:test](https://img.shields.io/badge/tests-node%3Atest-5FA04E?logo=nodedotjs&logoColor=white)](test) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/fastify-api-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/fastify-api-starter)
 
-<p align="center">
-  A Fastify REST API with structured logging, ready to deploy on Light Cloud.
-</p>
-
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-fastify"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
-
----
+A Fastify 5 REST API starter for Node.js 22 in plain JavaScript, with structured JSON logging, a `/health` check and routes written as Fastify plugins. It is a small, tested Fastify boilerplate for developers who want a fast API skeleton with a single dependency, no database and no build step. It runs with `npm start` anywhere Node.js runs, and deploys to Light Cloud in one click.
 
 ## Features
 
-- Fastify 5 with structured logging
-- Binds `0.0.0.0` rather than Fastify's localhost default, which is unreachable from outside the container
-- Routes as Fastify plugins, app built separately from the server so tests call it with `app.inject()`
-- Graceful shutdown on `SIGTERM`
-- Tests with the built-in Node test runner, no extra dependencies
-- Listens on `$PORT`, defaulting to 3000
+- Fastify 5 with two routes: `GET /` lists the endpoints, `GET /health` reports status, timestamp and uptime
+- Structured JSON request logs from Fastify's built-in logger (pino)
+- Routes as Fastify plugins in `src/routes/`, registered in `src/app.js`
+- Unknown routes and thrown errors answer in JSON, Fastify's default
+- Binds `0.0.0.0` instead of Fastify's localhost default, so the server is reachable inside a container
+- `buildApp()` creates the app without listening, so tests call it with `app.inject()` and open no port
+- Graceful shutdown on `SIGTERM` and `SIGINT` through `app.close()`
+- Tests with the built-in Node.js test runner (`node --test`), no test dependencies
+- One runtime dependency: `fastify`
+- Listens on `PORT`, defaulting to `3000`
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    client["Client"] -->|HTTP| server["src/server.js<br/>listens on PORT, logs"]
-    server --> app["src/app.js<br/>buildApp()"]
-    app --> routes["src/routes/root.js<br/>/ and /health"]
+You need Node.js 22 or newer.
+
+```bash
+git clone https://github.com/light-cloud-templates/fastify-api-starter.git
+cd fastify-api-starter
+npm install
+npm run dev
 ```
 
-## API Endpoints
+Open <http://localhost:3000> to see the endpoint list. `npm run dev` restarts the server when a file changes (`node --watch`); `npm start` runs it without watching.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Welcome message and API info |
-| GET | `/health` | Health check with uptime |
+Other ways to start:
+
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/fastify-api-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/fastify-api-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/fastify-api-starter)
+
+The Deploy button copies this template into your GitHub account and creates a server app that runs `npm start` in a container, listening on the port in `PORT`.
+
+There are no secrets to fill in. Every push to the default branch deploys again. The Free plan includes up to 3 server apps.
+
+### Deploy anywhere else
+
+This is a standard Fastify app with no Light Cloud code in it. Any host that runs Node.js 22 runs it: `npm ci --omit=dev`, then `npm start` with `PORT` set. It already binds `0.0.0.0`, so it works in any Node.js Docker image.
 
 ## Project structure
 
 ```text
 .
 ├── src/
-│   ├── app.js              # buildApp(): creates Fastify and registers routes
-│   ├── server.js           # Starts the server, shuts down on SIGTERM
-│   ├── config.js           # Settings read from the environment
+│   ├── app.js              # buildApp(): creates Fastify and registers the routes
+│   ├── server.js           # starts the server with logging, shuts down on SIGTERM
+│   ├── config.js           # port from the environment, host 0.0.0.0
 │   └── routes/
 │       └── root.js         # GET / and GET /health, as a Fastify plugin
 ├── test/
 │   └── app.test.js         # node:test tests using app.inject()
-├── .env.example            # Environment variables the app reads
-└── package.json
+├── .env.example            # the variables the app reads
+├── .mcp.json               # Light Cloud MCP server for AI coding agents
+└── package.json            # scripts: start, dev, test
 ```
 
-## Local Development
+## API endpoints
 
-You need Node.js 22 or newer.
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/` | Welcome message and the list of endpoints |
+| `GET` | `/health` | `{ "status": "healthy", "timestamp", "uptime" }` |
+
+Any other path answers `404` with Fastify's JSON error, `{ "message", "error": "Not Found", "statusCode": 404 }`.
 
 ```bash
-# Install dependencies
-npm install
+curl http://localhost:3000/health
+```
 
-# Start the server
-npm start
+On Light Cloud, use your app's URL instead of `http://localhost:3000`.
 
-# Start with file watching
-npm run dev
+## Environment variables
 
-# Run the tests
+| Name | Required | Default | What it does |
+| --- | --- | --- | --- |
+| `PORT` | No | `3000` | Port to listen on. Set by Light Cloud. |
+
+## Testing
+
+```bash
 npm test
 ```
 
-The API will be available at `http://localhost:3000`. `.env.example` lists the environment variables the app reads.
+The tests use `app.inject()` to call `/`, `/health` and an unknown route without starting a server. There is no linter configured.
 
-## Deploy to Light Cloud
+## How it works
 
-### 1. Create an Account
+```mermaid
+flowchart LR
+    client["Client: browser, curl, app"] -->|HTTP JSON| server["src/server.js<br/>0.0.0.0:PORT, logger on"]
+    server --> app["src/app.js<br/>buildApp"]
+    app --> routes["src/routes/root.js<br/>GET / and GET /health"]
+```
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+`src/server.js` calls `buildApp({ logger: true })` and listens; the tests call `buildApp()` with no logger and inject requests directly. Each file in `src/routes/` is a plugin that `buildApp` registers.
 
-### 2. Create New Application
+## FAQ
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Container"** as the deployment type
-3. Choose **"Fastify"** as the framework
+### How do I add a new route in Fastify?
 
-### 3. Connect Repository
+Create a plugin file in `src/routes/` shaped like `root.js` (an `async function (app)` that calls `app.get`, `app.post` and so on), then register it in `src/app.js` with `app.register(require('./routes/things'))`.
 
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
+### How do I validate a request body in Fastify?
 
-### 4. Configure Settings
+Pass a JSON schema in the route options, for example `app.post('/things', { schema: { body: { type: 'object', required: ['name'] } } }, handler)`. Fastify validates the body and answers `400` in JSON when it does not match.
 
-Light Cloud will auto-detect your settings, but you can verify:
+### How do I enable CORS?
 
-| Setting | Value |
-|---------|-------|
-| Port | `3000` |
-| Start Command | `npm start` |
+CORS is not included. Install `@fastify/cors` and register it in `buildApp()` with `app.register(require('@fastify/cors'), { origin: 'https://example.com' })`.
 
-### 5. Deploy
+### Why does it listen on 0.0.0.0?
 
-Click **"Deploy"** and your API will be live in minutes!
+Fastify listens on localhost by default, which nothing outside the container can reach. `src/config.js` sets the host to `0.0.0.0` so the platform's traffic gets in.
 
-Your API will be available at `https://your-app.light-cloud.io`
+### Can I deploy it without Light Cloud?
 
-## Learn More
+Yes. It is a plain Fastify app: any host with Node.js 22 runs it with `npm start`, listening on `PORT`.
 
-- [Fastify documentation](https://fastify.dev/docs/latest/)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+## Related templates
+
+- [express-api-starter](https://github.com/light-cloud-templates/express-api-starter): the same starter in Express
+- [hono-api-starter](https://github.com/light-cloud-templates/hono-api-starter): the same starter in Hono
+- [nestjs-api-starter](https://github.com/light-cloud-templates/nestjs-api-starter): a TypeScript API with NestJS
+- [express-postgresql-crud-api](https://github.com/light-cloud-templates/express-postgresql-crud-api): a Node.js CRUD API with PostgreSQL
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
