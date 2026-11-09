@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles and design tokens. Component styles live next to each component. */
+:root {
+  --text: #1f2933;
+  --muted: #666;
+  --border: #eaeaea;
+  --accent: #dd0031;
+  --accent-hover: #b0002a;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  background: #f0f0f0;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}

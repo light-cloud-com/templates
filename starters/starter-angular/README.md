@@ -16,22 +16,47 @@
 
 ## Features
 
-- Angular 21, scaffolded with `ng new`
-- Standalone components and signals
-- TypeScript with strict mode
-- Ready for production deployment
+- Angular 21 with standalone components and signals, scaffolded with `ng new`
+- Router with lazy-loaded pages (Home, About, 404) and a shared layout shell
+- Component styles next to each component, global tokens in `src/styles.css`
+- Unit tests with Vitest through the Angular CLI (`ng test`)
+- TypeScript strict mode and Prettier
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    src["src/ (TypeScript + templates)"] -->|npm run build| cli["Angular CLI"]
+    cli --> dist["dist/browser/ (static files)"]
+    dist -->|served by| lc["Light Cloud CDN"]
+    lc -->|unknown paths fall back to index.html| router["Angular Router"]
+```
+
+## Project structure
+
+```text
+.
+├── angular.json                # CLI workspace config (builds into dist/browser)
+├── public/                     # Static assets, copied as is
+└── src/
+    ├── index.html
+    ├── main.ts                 # Bootstraps App with appConfig
+    ├── styles.css              # Design tokens and base styles
+    └── app/
+        ├── app.ts|html|css     # Layout shell: header, nav, router outlet, footer
+        ├── app.config.ts       # Providers (router, error listeners)
+        ├── app.routes.ts       # Route table, pages loaded lazily
+        ├── components/counter/ # Shared component and its test
+        └── pages/              # home, about, not-found
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-
-# Build for production
-npm run build
+npm install                 # install dependencies
+npm start                   # dev server on http://localhost:4200
+npm test -- --watch=false   # unit tests (Vitest), once
+npm run build               # production build into dist/browser
 ```
 
 ## Deploy to Light Cloud
@@ -58,7 +83,7 @@ Light Cloud will auto-detect your settings, but you can verify:
 | Setting | Value |
 |---------|-------|
 | Build Command | `npm run build` |
-| Output Directory | `dist/starter-angular/browser` |
+| Output Directory | `dist/browser` |
 
 ### 5. Deploy
 
@@ -68,11 +93,15 @@ Your app will be available at `https://your-app.light-cloud.io`
 
 ## Learn More
 
-This starter is the output of `ng new`, with only the changes noted above.
+This starter began as the output of `ng new`, with routing and pages added following the [Angular style guide](https://angular.dev/style-guide).
 
 - [Angular documentation](https://angular.dev)
 - [Angular CLI reference](https://angular.dev/tools/cli)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 
