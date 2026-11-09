@@ -16,23 +16,56 @@
 
 ## Features
 
-- Svelte 5 with runes, scaffolded with `create vite`
-- Vite for fast development and optimized builds
-- Single-file components
-- Ready for production deployment
+- Svelte 5 with runes, built with Vite
+- Components in `src/lib/components`, each with its own scoped styles
+- Global design tokens and base styles in `src/styles/global.css`, with dark mode
+- ESLint (flat config with eslint-plugin-svelte) and Vitest with Testing Library
+- `VITE_` environment variables, with an `.env.example`
 
-## Local Development
+A single page with no router. When you need several pages, routing and server code, start from the SvelteKit template instead.
+
+## How it works
+
+```mermaid
+flowchart LR
+    src["src/ (Svelte components)"] -->|npm run build| vite["Vite + vite-plugin-svelte"]
+    vite --> dist["dist/ (static files)"]
+    dist -->|served by| lc["Light Cloud CDN"]
+```
+
+## Project structure
+
+```text
+.
+├── index.html                  # HTML entry, loads src/main.js
+├── public/                     # favicon, icon sprite; copied as is into dist/
+├── src/
+│   ├── main.js                 # Mounts App into #app
+│   ├── App.svelte              # Page composition
+│   ├── assets/                 # Images imported by components
+│   ├── lib/components/         # Layout, Hero, Counter (+ test), NextSteps, Ticks
+│   ├── styles/global.css       # Design tokens and base styles
+│   └── test/setup.js           # Testing Library matchers
+├── .env.example                # VITE_ variables
+├── eslint.config.js
+├── svelte.config.js
+└── vite.config.js              # Vite and Vitest config
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+npm install       # install dependencies
+npm run dev       # start the dev server on http://localhost:5173
+npm run lint      # ESLint
+npm test          # Vitest
+npm run build     # production build into dist/
+npm run preview   # serve the production build locally
 ```
+
+## Environment variables
+
+Copy `.env.example` to `.env.local`. Only variables that start with `VITE_` reach the browser, and they are baked in at build time, so never put secrets in them. On Light Cloud, set them in the app's environment variables and redeploy.
 
 ## Deploy to Light Cloud
 
@@ -73,6 +106,10 @@ This starter is the output of `npm create vite@latest -- --template svelte`, wit
 - [Svelte documentation](https://svelte.dev)
 - [Vite documentation](https://vite.dev)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 
