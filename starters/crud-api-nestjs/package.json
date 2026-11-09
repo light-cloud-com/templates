@@ -1,0 +1,28 @@
+{
+  "name": "starter-crud-api-nestjs",
+  "version": "1.0.0",
+  "description": "CRUD API with NestJS and PostgreSQL",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "12.4.1",
+    "@nestjs/core": "12.4.1",
+    "@nestjs/platform-express": "12.4.1",
+    "@nestjs/swagger": "12.1.1",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.15.1",
+    "pg": "8.23.1",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
+    "typescript": "6.0.3"
+  }
+}

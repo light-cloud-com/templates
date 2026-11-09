@@ -1,0 +1,4 @@
+# Binaries
+/starter-*
+*.exe
+.env

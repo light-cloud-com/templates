@@ -1,0 +1,395 @@
+[
+  {
+    "folder": "starters/opensaas",
+    "slug": "opensaas",
+    "name": "Open SaaS",
+    "description": "The Open SaaS starter (Wasp) with a connected PostgreSQL database",
+    "language": "JavaScript",
+    "database": true,
+    "repo": "light-cloud-com/starter-opensaas",
+    "keep": [
+      "LICENSE"
+    ],
+    "commit": "699f9b5ea52267c78c8e9b09adca3f23a2032f19"
+  },
+  {
+    "folder": "starters/starter-react",
+    "slug": "starter-react",
+    "name": "React",
+    "description": "Modern React app with Vite",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-react",
+    "commit": "e452ba939a2851f4eaef36f6b50236fb083c54a1"
+  },
+  {
+    "folder": "starters/starter-vue",
+    "slug": "starter-vue",
+    "name": "Vue",
+    "description": "Vue 3 app with Vite",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-vue",
+    "commit": "f8c67ee1217ec893d78ce0a773d57a134dedeca7"
+  },
+  {
+    "folder": "starters/starter-angular",
+    "slug": "starter-angular",
+    "name": "Angular",
+    "description": "Angular 21 with standalone components",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-angular",
+    "commit": "b8b68f6948c223cb673064f3dd228092c6d589b4"
+  },
+  {
+    "folder": "starters/starter-svelte",
+    "slug": "starter-svelte",
+    "name": "Svelte",
+    "description": "Svelte app with Vite",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-svelte",
+    "commit": "fa8a3bc5747ddd5b5fa15757998d04fd56a6449c"
+  },
+  {
+    "folder": "starters/starter-html",
+    "slug": "starter-html",
+    "name": "Static HTML",
+    "description": "Simple HTML, CSS, JavaScript",
+    "language": "HTML",
+    "database": false,
+    "repo": "light-cloud-com/starter-html",
+    "commit": "794d25e510e46c6bfe9882654ea657ea309ebf66"
+  },
+  {
+    "folder": "starters/starter-go",
+    "slug": "starter-go",
+    "name": "Go",
+    "description": "Go REST API (net/http)",
+    "language": "Go",
+    "database": false,
+    "repo": "light-cloud-com/starter-go",
+    "commit": "c812b589cd2adee3f683ab63aa75c876b671340e"
+  },
+  {
+    "folder": "starters/starter-php",
+    "slug": "starter-php",
+    "name": "PHP",
+    "description": "Slim Framework REST API",
+    "language": "PHP",
+    "database": false,
+    "repo": "light-cloud-com/starter-php",
+    "commit": "6a688fffaa7524977528e324ea444215dd6b665a"
+  },
+  {
+    "folder": "starters/starter-dotnet",
+    "slug": "starter-dotnet",
+    "name": ".NET",
+    "description": "ASP.NET Core REST API",
+    "language": ".NET",
+    "database": false,
+    "repo": "light-cloud-com/starter-dotnet",
+    "commit": "b4fa7aca5e2103daf9af791b7e79145dfc2992d7"
+  },
+  {
+    "folder": "starters/starter-dockerfile",
+    "slug": "starter-dockerfile",
+    "name": "Dockerfile",
+    "description": "Custom Dockerfile template",
+    "language": "Docker",
+    "database": false,
+    "repo": "light-cloud-com/starter-dockerfile",
+    "commit": "9f238af7d9583705d2ce3e1a5f0677894969e5ec"
+  },
+  {
+    "folder": "starters/starter-nextjs",
+    "slug": "starter-nextjs",
+    "name": "Next.js",
+    "description": "Next.js with the App Router, rendered on a server",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-nextjs",
+    "commit": "38ea478a72c75a1266137c026b58261e6e7d0370"
+  },
+  {
+    "folder": "starters/starter-nuxt",
+    "slug": "starter-nuxt",
+    "name": "Nuxt",
+    "description": "Nuxt 4 with server-side rendering",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-nuxt",
+    "commit": "15b9820d79b1579cc860775a6ab0269090a3c233"
+  },
+  {
+    "folder": "starters/starter-sveltekit",
+    "slug": "starter-sveltekit",
+    "name": "SvelteKit",
+    "description": "SvelteKit with the Node adapter",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-sveltekit",
+    "commit": "112303cb49dd4962537188373f94fafff472b46a"
+  },
+  {
+    "folder": "starters/starter-remix",
+    "slug": "starter-remix",
+    "name": "Remix",
+    "description": "Remix v2 on Vite",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-remix",
+    "commit": "0f79c4377712a1fc143e911f50c0a39ff3669617"
+  },
+  {
+    "folder": "starters/starter-astro",
+    "slug": "starter-astro",
+    "name": "Astro",
+    "description": "Astro, prerendered to static files",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-astro",
+    "commit": "acc00d5d394e88f308ae19d7cb655120198ae2d1"
+  },
+  {
+    "folder": "starters/starter-solid",
+    "slug": "starter-solid",
+    "name": "SolidJS",
+    "description": "SolidJS app with Vite",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-solid",
+    "commit": "2002cf822941f1922f0499286d4cf2636c92492f"
+  },
+  {
+    "folder": "starters/starter-express",
+    "slug": "starter-express",
+    "name": "Express",
+    "description": "Express API with CORS and a health check",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-express",
+    "commit": "cfbbf49c9307351ebf2d00939a84e8cccd38b23b"
+  },
+  {
+    "folder": "starters/starter-fastify",
+    "slug": "starter-fastify",
+    "name": "Fastify",
+    "description": "Fastify API with structured logging",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-fastify",
+    "commit": "7bed7c75eb80d5c9e14e2788f9dffe809c68ed79"
+  },
+  {
+    "folder": "starters/starter-hono",
+    "slug": "starter-hono",
+    "name": "Hono",
+    "description": "Hono API on the Node server adapter",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-hono",
+    "commit": "ab989d2b7b91f1e72875e5d3f8e7aad8a500b57d"
+  },
+  {
+    "folder": "starters/starter-nestjs",
+    "slug": "starter-nestjs",
+    "name": "NestJS",
+    "description": "NestJS API with TypeScript",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-nestjs",
+    "commit": "3a57e5d1507c741f5bf8d2c563fdd27e4cb8fa39"
+  },
+  {
+    "folder": "starters/starter-fastapi",
+    "slug": "starter-fastapi",
+    "name": "FastAPI",
+    "description": "FastAPI service served by Uvicorn",
+    "language": "Python",
+    "database": false,
+    "repo": "light-cloud-com/starter-fastapi",
+    "commit": "9e4ac4956b16ab36b7ffa4025e33edd3fb607157"
+  },
+  {
+    "folder": "starters/starter-flask",
+    "slug": "starter-flask",
+    "name": "Flask",
+    "description": "Flask service served by Waitress",
+    "language": "Python",
+    "database": false,
+    "repo": "light-cloud-com/starter-flask",
+    "commit": "d2bf0d5387ff372d797a9677902b8957f5423f8e"
+  },
+  {
+    "folder": "starters/starter-gin",
+    "slug": "starter-gin",
+    "name": "Gin",
+    "description": "Gin HTTP service in Go",
+    "language": "Go",
+    "database": false,
+    "repo": "light-cloud-com/starter-gin",
+    "commit": "fa14b08e3f0d5bd96aa58f6e31ebe8a3a0497512"
+  },
+  {
+    "folder": "starters/starter-echo",
+    "slug": "starter-echo",
+    "name": "Echo",
+    "description": "Echo HTTP service in Go",
+    "language": "Go",
+    "database": false,
+    "repo": "light-cloud-com/starter-echo",
+    "commit": "f770e28076229376b2f728f8c8a07f0e826e3a53"
+  },
+  {
+    "folder": "starters/starter-fiber",
+    "slug": "starter-fiber",
+    "name": "Fiber",
+    "description": "Fiber HTTP service in Go",
+    "language": "Go",
+    "database": false,
+    "repo": "light-cloud-com/starter-fiber",
+    "commit": "ef155890e54cb81c4e5fadb2ca8538ff67580c4f"
+  },
+  {
+    "folder": "starters/starter-springboot",
+    "slug": "starter-springboot",
+    "name": "Spring Boot",
+    "description": "Spring Boot web service, built with Maven",
+    "language": "Java",
+    "database": false,
+    "repo": "light-cloud-com/starter-springboot",
+    "commit": "37695efb0db508a3ae6488ef26b8fa580ebe9861"
+  },
+  {
+    "folder": "starters/starter-quarkus",
+    "slug": "starter-quarkus",
+    "name": "Quarkus",
+    "description": "Quarkus REST service, built with Maven",
+    "language": "Java",
+    "database": false,
+    "repo": "light-cloud-com/starter-quarkus",
+    "commit": "af34e2ed4f5d0ade2a02c294c93b0939a8997dd9"
+  },
+  {
+    "folder": "starters/starter-sinatra",
+    "slug": "starter-sinatra",
+    "name": "Sinatra",
+    "description": "Sinatra service served through Rack",
+    "language": "Ruby",
+    "database": false,
+    "repo": "light-cloud-com/starter-sinatra",
+    "commit": "37415f71b6c8ed2003bafe733e74cadc7d4e7885"
+  },
+  {
+    "folder": "starters/starter-docusaurus",
+    "slug": "starter-docusaurus",
+    "name": "Docusaurus",
+    "description": "Docusaurus documentation site",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-docusaurus",
+    "commit": "74348be01937939747fb3e17f1bf7cd60cce506f"
+  },
+  {
+    "folder": "starters/starter-eleventy",
+    "slug": "starter-eleventy",
+    "name": "Eleventy",
+    "description": "Eleventy static site generator",
+    "language": "JavaScript",
+    "database": false,
+    "repo": "light-cloud-com/starter-eleventy",
+    "commit": "ce148661a2b18e5dc4ceb246f5639611f89d673e"
+  },
+  {
+    "folder": "starters/crud-api-express",
+    "slug": "crud-api-express",
+    "name": "Express CRUD API",
+    "description": "REST API for items on PostgreSQL, built with Express 5 and pg",
+    "language": "JavaScript",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-express",
+    "commit": "40235f22a969e2adf70e130bfe03ccfea708819f"
+  },
+  {
+    "folder": "starters/crud-api-fastapi",
+    "slug": "crud-api-fastapi",
+    "name": "FastAPI CRUD API",
+    "description": "REST API for items on PostgreSQL, built with FastAPI and psycopg 3",
+    "language": "Python",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-fastapi",
+    "commit": "6168c4ff48a213c8454e017d9392d3810d2f042c"
+  },
+  {
+    "folder": "starters/crud-api-nestjs",
+    "slug": "crud-api-nestjs",
+    "name": "NestJS CRUD API",
+    "description": "REST API for items on PostgreSQL, built with NestJS and pg",
+    "language": "JavaScript",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-nestjs",
+    "commit": "d618f13537eaa16c4209305ff0c630ae66def029"
+  },
+  {
+    "folder": "starters/crud-api-hono",
+    "slug": "crud-api-hono",
+    "name": "Hono CRUD API",
+    "description": "REST API for items on PostgreSQL, built with Hono on Node and postgres.js",
+    "language": "JavaScript",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-hono",
+    "commit": "8237ae51bb542e91c2bcd3a6a609dd3d3ed8bc1c"
+  },
+  {
+    "folder": "starters/crud-api-gin",
+    "slug": "crud-api-gin",
+    "name": "Gin CRUD API",
+    "description": "REST API for items on PostgreSQL, built with Gin and pgx",
+    "language": "Go",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-gin",
+    "commit": "ccf356ea688e5b17d68e252e1ca1470982b4ab48"
+  },
+  {
+    "folder": "starters/crud-api-spring-boot",
+    "slug": "crud-api-spring-boot",
+    "name": "Spring Boot CRUD API",
+    "description": "REST API for items on PostgreSQL, built with Spring Boot and JDBC",
+    "language": "Java",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-spring-boot",
+    "commit": "d24ef9a5156a63cf0973716b64acc982755937a8"
+  },
+  {
+    "folder": "starters/crud-api-aspnet",
+    "slug": "crud-api-aspnet",
+    "name": "ASP.NET Core CRUD API",
+    "description": "REST API for items on PostgreSQL, built with ASP.NET Core minimal API and Npgsql",
+    "language": ".NET",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-aspnet",
+    "commit": "d489b99629ba83d87ab6ef03fc921cea3a06c7b0"
+  },
+  {
+    "folder": "starters/crud-api-django",
+    "slug": "crud-api-django",
+    "name": "Django CRUD API",
+    "description": "REST API for items on PostgreSQL, built with Django REST framework",
+    "language": "Python",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-django",
+    "commit": "b4da1f4ee4cb78eaf15732316a94ba2bb3de8c0c"
+  },
+  {
+    "folder": "starters/crud-api-flask",
+    "slug": "crud-api-flask",
+    "name": "Flask CRUD API",
+    "description": "REST API for items on PostgreSQL, built with Flask and psycopg 3",
+    "language": "Python",
+    "database": true,
+    "repo": "light-cloud-com/starter-crud-api-flask",
+    "commit": "6f5e2041b91861b41b53a0ba511d6250d381d7bf"
+  }
+]

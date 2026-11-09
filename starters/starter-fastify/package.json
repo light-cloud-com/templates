@@ -1,0 +1,13 @@
+{
+  "name": "starter-fastify",
+  "version": "1.0.0",
+  "description": "Fastify starter for Light Cloud",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "fastify": "^5.2.1"
+  }
+}

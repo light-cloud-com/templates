@@ -1,0 +1,16 @@
+{
+  "name": "starter-crud-api-hono",
+  "version": "1.0.0",
+  "description": "CRUD API with Hono on Node.js and PostgreSQL",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "2.1.6",
+    "hono": "4.13.17",
+    "postgres": "4.1.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "starter-crud-api-express",
+  "version": "1.0.0",
+  "description": "CRUD API with Express 5 and PostgreSQL",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "pg": "8.23.1"
+  }
+}
