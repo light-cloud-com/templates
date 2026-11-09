@@ -16,23 +16,54 @@
 
 ## Features
 
-- React 18 with Hooks
-- Vite for fast development and optimized builds
-- Modern CSS styling
-- Ready for production deployment
+- React 18 with Vite
+- Client-side routing with React Router (Home, About, 404)
+- Shared layout, CSS Modules per component, global styles in one place
+- ESLint (flat config) and Vitest with Testing Library
+- `VITE_` environment variables, with an `.env.example`
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    src["src/ (React + JSX)"] -->|npm run build| vite["Vite"]
+    vite --> dist["dist/ (static files)"]
+    dist -->|served by| lc["Light Cloud CDN"]
+    lc -->|unknown paths fall back to index.html| router["React Router"]
+```
+
+## Project structure
+
+```text
+.
+├── index.html              # HTML entry, loads src/main.jsx
+├── public/                 # Copied as is into dist/
+├── src/
+│   ├── main.jsx            # Mounts the app inside BrowserRouter
+│   ├── App.jsx             # Route table
+│   ├── components/         # Layout, Counter (+ its test), CSS Modules
+│   ├── pages/              # Home, About, NotFound
+│   ├── styles/global.css   # Design tokens and base styles
+│   └── test/setup.js       # Testing Library matchers
+├── .env.example            # VITE_ variables
+├── eslint.config.js
+└── vite.config.js          # Vite and Vitest config
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+npm install       # install dependencies
+npm run dev       # start the dev server on http://localhost:5173
+npm run lint      # ESLint
+npm test          # Vitest
+npm run build     # production build into dist/
+npm run preview   # serve the production build locally
 ```
+
+## Environment variables
+
+Copy `.env.example` to `.env.local`. Only variables that start with `VITE_` reach the browser, and they are baked in at build time, so never put secrets in them. On Light Cloud, set them in the app's environment variables and redeploy.
 
 ## Deploy to Light Cloud
 
@@ -71,6 +102,10 @@ Your app will be available at `https://your-app.light-cloud.io`
 - [React documentation](https://react.dev)
 - [Vite documentation](https://vite.dev)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 

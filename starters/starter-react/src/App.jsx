@@ -1,28 +1,17 @@
-import { useState } from 'react'
-import './App.css'
+import { Route, Routes } from 'react-router-dom'
+import Layout from './components/Layout.jsx'
+import Home from './pages/Home.jsx'
+import About from './pages/About.jsx'
+import NotFound from './pages/NotFound.jsx'
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <div className="app">
-      <header className="header">
-        <h1>Welcome to React</h1>
-        <p>Your app is ready to deploy on Light Cloud</p>
-      </header>
-      <main className="main">
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            Count is {count}
-          </button>
-          <p>Edit <code>src/App.jsx</code> and save to test HMR</p>
-        </div>
-      </main>
-      <footer className="footer">
-        <p>Deployed with Light Cloud</p>
-      </footer>
-    </div>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   )
 }
-
-export default App
