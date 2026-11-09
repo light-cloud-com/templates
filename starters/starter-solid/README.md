@@ -16,23 +16,58 @@
 
 ## Features
 
-- SolidJS 1.9 with fine-grained reactivity
-- Vite for fast development and optimized builds
-- TypeScript out of the box
-- Ready for production deployment
+- SolidJS 1.9 with fine-grained reactivity and TypeScript
+- Client-side routing with Solid Router (Home, About, 404), lazy-loaded pages
+- Layout component, CSS Modules per component, global styles in one place
+- ESLint (flat config with eslint-plugin-solid), `tsc` type checking, Vitest with Solid Testing Library
+- `VITE_` environment variables, typed in `src/env.d.ts`, with an `.env.example`
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    src["src/ (Solid + TSX)"] -->|npm run build| vite["Vite + vite-plugin-solid"]
+    vite --> dist["dist/ (static files)"]
+    dist -->|served by| lc["Light Cloud CDN"]
+    lc -->|unknown paths fall back to index.html| router["Solid Router"]
+```
+
+## Project structure
+
+```text
+.
+├── index.html              # HTML entry, loads src/index.tsx
+├── src/
+│   ├── index.tsx           # Renders the app into #root
+│   ├── App.tsx             # Router and route table
+│   ├── components/         # Layout, Counter (+ its test), CSS Modules
+│   ├── pages/              # Home, About, NotFound
+│   ├── styles/global.css   # Design tokens and base styles
+│   ├── test/setup.ts       # Testing Library matchers
+│   └── env.d.ts            # Types for import.meta.env
+├── .env.example            # VITE_ variables
+├── eslint.config.js
+├── tsconfig.json
+└── vite.config.ts          # Vite and Vitest config
+```
+
+## Local development
+
+The lockfile is pnpm's (`pnpm-lock.yaml`); npm works too.
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+pnpm install      # install dependencies
+pnpm dev          # start the dev server on http://localhost:3000
+pnpm lint         # ESLint
+pnpm typecheck    # TypeScript
+pnpm test         # Vitest
+pnpm build        # production build into dist/
+pnpm serve        # serve the production build locally
 ```
+
+## Environment variables
+
+Copy `.env.example` to `.env.local`. Only variables that start with `VITE_` reach the browser, and they are baked in at build time, so never put secrets in them. On Light Cloud, set them in the app's environment variables and redeploy.
 
 ## Deploy to Light Cloud
 
@@ -68,11 +103,15 @@ Your app will be available at `https://your-app.light-cloud.io`
 
 ## Learn More
 
-This starter is the output of `npx degit solidjs/templates/ts`, with only the changes noted above.
+This starter began as `npx degit solidjs/templates/ts` and adds routing, a layout, lint and tests.
 
 - [SolidJS documentation](https://docs.solidjs.com)
 - [Vite documentation](https://vite.dev)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 

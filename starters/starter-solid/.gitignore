@@ -1,2 +1,13 @@
 node_modules
 dist
+coverage
+
+# Environment (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# Editor and OS
+.idea
+.DS_Store
+*.log
