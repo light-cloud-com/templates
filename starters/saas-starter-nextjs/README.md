@@ -7,12 +7,13 @@ A complete SaaS starter built with Next.js 16 (App Router), PostgreSQL, Better A
 ## Features
 
 - **Accounts**: email and password sign-up and sign-in, sign-out, password reset by email, and email verification (only when an email provider is set). GitHub and Google sign-in appear when you add their keys. Sessions live in the database.
-- **Teams**: workspaces with owner, admin and member roles. Switch between workspaces, invite people by email (the invite link also shows in the app), accept or decline invites.
-- **Onboarding**: after the first sign-up, name your workspace, invite teammates (optional) and pick a plan (when billing is on), then land on a dashboard with a getting-started checklist.
-- **Marketing pages**: landing page with features and FAQ, a pricing page driven by one plans file, terms and privacy placeholders. Light and dark theme, works at phone width, keyboard and screen reader friendly.
-- **App**: sidebar shell with workspace switcher and user menu, a Projects example resource (create, edit, delete) with plan limits (Free = 3 projects), account settings and workspace settings.
+- **Teams**: workspaces with owner, admin and member roles. Switch between workspaces (you stay in the same section), invite people by email or by a link you copy, accept or decline invites. Members create and edit projects; owners and admins also delete them, manage members and API keys; only owners handle billing and delete the workspace.
+- **Onboarding**: after the first sign-up, a stepper walks through naming the workspace, inviting teammates (optional, with a copyable invite link) and picking a plan (when billing is on). A plan chosen on the pricing page (`/sign-up?plan=pro`) is carried through to that step.
+- **Marketing pages**: sticky header with a phone menu, a landing page with a product picture of the dashboard, features, how it works, pricing preview, FAQ and a footer; a pricing page driven by one plans file; terms and privacy placeholders.
+- **App**: a flat, professional UI (Inter, one accent colour, borders instead of shadows) in light and dark. Sidebar with the workspace switcher and the user menu at the bottom on desktop, a sticky top bar with a slide-out menu on phones. Dashboard with a getting-started checklist and progress, usage cards, recent projects and quick actions. A Projects example resource (create in a dialog, edit, delete) with plan limits (Free = 3 projects). Settings for the workspace, members, API keys, billing and your account.
+- **Forms and feedback**: field-level, plain-language errors (values are kept after an error), length limits on every input, toasts after every change, confirmation dialogs before anything destructive, copy buttons for keys and invite links, loading skeletons, and friendly not-found and error pages. Tables turn into cards on phones.
 - **Billing**: Stripe Checkout to upgrade, the Stripe customer portal to manage, and a webhook that keeps the plan in sync. Off until you add the Stripe variables; until then everyone is on Free.
-- **Admin panel** at `/admin`: search users and workspaces, see plans, disable or re-enable users, sign in as a user.
+- **Admin panel** at `/admin`: search and page through users and workspaces, see plans, disable or re-enable users, sign in as a user.
 - **Emails**: verification, password reset, invitation and welcome emails through Resend, or written to the server log when no key is set.
 - **API keys and REST API**: per-workspace keys, shown once and stored as a hash, for `GET/POST /api/v1/projects` and friends.
 - **Health check**: `GET /api/health` answers `200` when the database answers and `503` when it does not.
@@ -49,7 +50,7 @@ flowchart LR
 │   │       ├── auth/[...all]/    # Better Auth: sign-in, OAuth callbacks, Stripe webhook
 │   │       ├── health/           # GET /api/health
 │   │       └── v1/projects/      # REST API, API key auth
-│   ├── components/               # App shell, forms, plan cards; ui/ holds shadcn/ui components
+│   ├── components/               # App shell, forms, dialogs, plan cards; ui/ holds shadcn/ui components
 │   └── lib/
 │       ├── auth.ts               # Better Auth setup: accounts, workspaces, admin, Stripe
 │       ├── config.ts             # Environment variables, and which features are on
@@ -59,6 +60,7 @@ flowchart LR
 │       ├── email.ts              # Resend or the server log, plus email texts
 │       ├── api-keys.ts           # Key generation and hashing
 │       ├── projects.ts           # Project queries shared by the app and the API
+│       ├── validation.ts         # Input rules and length limits shared by forms and actions
 │       ├── session.ts            # Signed-in user and active workspace helpers
 │       └── db/                   # Drizzle client and schema
 ├── drizzle/                      # SQL migrations (committed)
@@ -142,11 +144,11 @@ Set the client id and secret, redeploy, and the button appears on the sign-in an
 
 ## How admin works
 
-The first account ever created is an admin, and so is anyone whose email is in `ADMIN_EMAILS`. Admins see **Admin** in the user menu and can open `/admin`; everyone else gets a 404 there. From the panel an admin can search users and workspaces, see each workspace's plan, disable or re-enable a user (disabling signs them out everywhere) and sign in as a user to see what they see.
+The first account ever created is an admin, and so is anyone whose email is in `ADMIN_EMAILS`. Admins see **Admin panel** in the user menu and can open `/admin`; everyone else gets a 404 there. Admins also see setup hints (which Stripe or Resend variables to set) where a feature is off; everyone else sees neutral copy. From the panel an admin can search users and workspaces, see each workspace's plan, disable or re-enable a user (disabling signs them out everywhere) and sign in as a user to see what they see.
 
 ## API
 
-Create a key under **Settings → API keys** (owners and admins). The key is shown once; only its hash is stored. Every request acts on the key's workspace.
+Create a key under **Settings → API keys** (owners and admins). The key is shown once; only its hash is stored. Every request acts on the key's workspace with owner/admin rights (it can delete projects). Keys made by a production build start with `sk_live_`, keys made in development with `sk_test_`; both work.
 
 | Method | Path | What it does |
 | --- | --- | --- |
@@ -169,7 +171,7 @@ curl https://<your app>/api/v1/projects -H "Authorization: Bearer $API_KEY"
 
 ## Make it yours
 
-Projects is the example resource: rename it in `src/lib/db/schema.ts` and `src/lib/projects.ts`, generate a migration, and the pages in `src/app/(app)/projects` and the API in `src/app/api/v1` follow the same pattern. Colours are tokens at the top of `src/app/globals.css`. Push, and Light Cloud redeploys.
+Projects is the example resource: rename it in `src/lib/db/schema.ts` and `src/lib/projects.ts`, generate a migration, and the pages in `src/app/(app)/projects` and the API in `src/app/api/v1` follow the same pattern. Colours (one accent, zinc neutrals, status colours) and the radius are tokens at the top of `src/app/globals.css`; the font is Inter, loaded with `next/font` in `src/app/layout.tsx`. Push, and Light Cloud redeploys.
 
 ## License
 

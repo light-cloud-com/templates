@@ -17,13 +17,14 @@ export async function setBannedAction(_: ActionState, form: FormData): Promise<A
       await auth.api.unbanUser({ body: { userId }, headers: h });
     }
     revalidatePath("/admin");
-    return { ok: form.get("ban") === "1" ? "User disabled and signed out." : "User enabled." };
+    return { ok: form.get("ban") === "1" ? "User disabled and signed out" : "User enabled" };
   });
 }
 
 export async function impersonateAction(_: ActionState, form: FormData): Promise<ActionState> {
   return runAction(async () => {
     await auth.api.impersonateUser({ body: { userId: String(form.get("userId")) }, headers: await headers() });
+    revalidatePath("/", "layout");
     redirect("/dashboard");
   });
 }

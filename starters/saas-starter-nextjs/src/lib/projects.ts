@@ -3,12 +3,13 @@ import { z } from "zod";
 import { getWorkspacePlan } from "./billing";
 import { db, schema } from "./db";
 import { PlanLimitError, withinLimit } from "./plans";
+import { limits } from "./validation";
 
 // Project data access, shared by the dashboard's server actions and the REST API. Every query is
 // scoped by organizationId, so one workspace can never read or change another's projects.
 export const projectInput = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100),
-  description: z.string().trim().max(1000).default(""),
+  name: z.string().trim().min(1, "Name your project").max(limits.projectName, `Name must be ${limits.projectName} characters or fewer`),
+  description: z.string().trim().max(limits.projectDescription, `Description must be ${limits.projectDescription} characters or fewer`).default(""),
 });
 export const projectPatch = projectInput.partial();
 

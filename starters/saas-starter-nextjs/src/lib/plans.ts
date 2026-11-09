@@ -1,4 +1,6 @@
 // The one plans config: the pricing page, limits and Stripe checkout all read from here.
+import { billingEnabled } from "./config";
+
 // `null` means unlimited. Prices are display only; Stripe charges what the price ids say.
 export type PlanId = "free" | "pro" | "business";
 export type LimitedResource = "projects" | "members";
@@ -52,6 +54,7 @@ export function withinLimit(planId: string | null | undefined, resource: Limited
 export class PlanLimitError extends Error {
   constructor(public resource: LimitedResource, public planId: PlanId) {
     const limit = getPlan(planId).limits[resource];
-    super(`The ${getPlan(planId).name} plan allows ${limit} ${resource}. Upgrade to add more.`);
+    const next = billingEnabled ? "Upgrade to add more." : resource === "projects" ? "Delete one to add another." : "Remove someone to add another.";
+    super(`The ${getPlan(planId).name} plan allows ${limit} ${resource}. ${next}`);
   }
 }

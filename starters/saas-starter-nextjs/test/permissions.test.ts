@@ -6,6 +6,13 @@ describe("workspace permissions", () => {
     for (const role of ["owner", "admin", "member"]) expect(can(role, "project:write")).toBe(true);
   });
 
+  it("lets members create and edit projects but only owners and admins delete them", () => {
+    expect(can("owner", "project:delete")).toBe(true);
+    expect(can("admin", "project:delete")).toBe(true);
+    expect(can("member", "project:delete")).toBe(false);
+    expect(() => assertCan("member", "project:delete")).toThrow("Only owners and admins can delete projects.");
+  });
+
   it("keeps billing and deletion with owners", () => {
     expect(can("owner", "billing:manage")).toBe(true);
     expect(can("owner", "workspace:delete")).toBe(true);

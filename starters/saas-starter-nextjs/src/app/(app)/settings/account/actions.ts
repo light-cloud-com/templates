@@ -7,31 +7,39 @@ import { z } from "zod";
 import { type ActionState, runAction } from "@/lib/action";
 import { auth } from "@/lib/auth";
 import { emailEnabled } from "@/lib/config";
+import { flash } from "@/lib/flash";
+import { email, newPassword, parseForm, personName } from "@/lib/validation";
 
 export async function updateNameAction(_: ActionState, form: FormData): Promise<ActionState> {
   return runAction(async () => {
-    const name = z.string().trim().min(1, "Enter your name").max(100).parse(form.get("name"));
+    const { name } = parseForm(form, { name: personName });
     await auth.api.updateUser({ body: { name }, headers: await headers() });
     revalidatePath("/", "layout");
-    return { ok: "Name saved." };
+    return { ok: "Name saved" };
   });
 }
 
 export async function changeEmailAction(_: ActionState, form: FormData): Promise<ActionState> {
   return runAction(async () => {
-    const newEmail = z.email("Enter a valid email address").parse(form.get("email"));
+    const { email: newEmail } = parseForm(form, { email });
     await auth.api.changeEmail({ body: { newEmail, callbackURL: "/settings/account" }, headers: await headers() });
     revalidatePath("/", "layout");
-    return { ok: emailEnabled ? "Check your inbox to confirm the change." : "Email updated." };
+    return { ok: emailEnabled ? "Check your inbox to confirm the new address" : "Email updated" };
   });
 }
 
 export async function changePasswordAction(_: ActionState, form: FormData): Promise<ActionState> {
   return runAction(async () => {
-    const body = z
-      .object({ currentPassword: z.string().min(1, "Enter your current password"), newPassword: z.string().min(8, "Use at least 8 characters").max(128) })
-      .parse(Object.fromEntries(form));
-    await auth.api.changePassword({ body: { ...body, revokeOtherSessions: true }, headers: await headers() });
+    const body = parseForm(form, { currentPassword: z.string().min(1, "Enter your current password"), newPassword });
+    try {
+      await auth.api.changePassword({ body: { ...body, revokeOtherSessions: true }, headers: await headers() });
+    } catch (err) {
+      // Better Auth answers INVALID_PASSWORD for a wrong current password; show it on that field.
+      if ((err as { body?: { code?: string } }).body?.code === "INVALID_PASSWORD") {
+        return { fieldErrors: { currentPassword: "That is not your current password." } };
+      }
+      throw err;
+    }
     return { ok: "Password changed. Other devices were signed out." };
   });
 }
@@ -39,7 +47,9 @@ export async function changePasswordAction(_: ActionState, form: FormData): Prom
 export async function deleteAccountAction(_: ActionState, form: FormData): Promise<ActionState> {
   return runAction(async () => {
     const password = String(form.get("password") ?? "");
+    if (form.get("hasPassword") === "1" && !password) return { fieldErrors: { password: "Enter your password to confirm." } };
     await auth.api.deleteUser({ body: password ? { password } : {}, headers: await headers() });
+    await flash("Your account was deleted");
     redirect("/");
   });
 }

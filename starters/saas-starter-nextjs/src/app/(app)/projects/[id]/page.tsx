@@ -1,49 +1,68 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ActionForm, Field, SubmitButton } from "@/components/form";
+import { ConfirmAction } from "@/components/confirm-action";
+import { ActionForm, Field, SubmitButton, TextareaField } from "@/components/form";
 import { PageHeader } from "@/components/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate, timeAgo } from "@/lib/format";
+import { can } from "@/lib/permissions";
 import { getProject } from "@/lib/projects";
 import { requireWorkspace } from "@/lib/session";
+import { limits } from "@/lib/validation";
 import { deleteProjectAction, updateProjectAction } from "../actions";
 
-export const metadata: Metadata = { title: "Edit project" };
+export async function generateMetadata({ params }: PageProps<"/projects/[id]">): Promise<Metadata> {
+  const { workspace } = await requireWorkspace();
+  const project = await getProject(workspace.id, (await params).id);
+  return { title: project ? project.name : "Project not found" };
+}
 
 export default async function ProjectPage({ params }: PageProps<"/projects/[id]">) {
-  const { workspace } = await requireWorkspace();
+  const { workspace, role } = await requireWorkspace();
   const project = await getProject(workspace.id, (await params).id);
   if (!project) notFound();
 
   return (
     <>
-      <Link href="/projects" className="text-sm text-primary underline-offset-4 hover:underline">← All projects</Link>
-      <PageHeader title={project.name} description={`Created ${project.createdAt.toLocaleDateString("en")}`} />
+      <PageHeader
+        title={project.name}
+        breadcrumb={[{ label: "Projects", href: "/projects" }]}
+        description={`Created ${formatDate(project.createdAt)} · updated ${timeAgo(project.updatedAt)}`}
+      />
       <Card>
-        <CardHeader><CardTitle><h2>Details</h2></CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle><h2>Details</h2></CardTitle>
+          <CardDescription>Everyone in {workspace.name} can see and edit this project.</CardDescription>
+        </CardHeader>
         <CardContent>
-          <ActionForm action={updateProjectAction}>
+          <ActionForm action={updateProjectAction} className="max-w-xl">
             <input type="hidden" name="id" value={project.id} />
-            <Field label="Name" name="name" defaultValue={project.name} required maxLength={100} />
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" defaultValue={project.description} maxLength={1000} rows={3} />
-            </div>
-            <SubmitButton>Save</SubmitButton>
+            <Field label="Name" name="name" defaultValue={project.name} required maxLength={limits.projectName} />
+            <TextareaField label="Description" name="description" defaultValue={project.description} maxLength={limits.projectDescription} rows={4} />
+            <SubmitButton>Save changes</SubmitButton>
           </ActionForm>
         </CardContent>
       </Card>
-      <Card className="border-destructive/50">
-        <CardHeader><CardTitle><h2>Delete project</h2></CardTitle></CardHeader>
-        <CardContent>
-          <ActionForm action={deleteProjectAction}>
-            <input type="hidden" name="id" value={project.id} />
-            <p className="text-sm text-muted-foreground">This cannot be undone.</p>
-            <SubmitButton variant="destructive">Delete project</SubmitButton>
-          </ActionForm>
-        </CardContent>
+      <Card className="border-destructive/30">
+        <CardHeader>
+          <CardTitle><h2>Delete project</h2></CardTitle>
+          <CardDescription>
+            {can(role, "project:delete") ? "Removes the project for everyone in the workspace. This cannot be undone." : "Only owners and admins can delete projects."}
+          </CardDescription>
+        </CardHeader>
+        {can(role, "project:delete") && (
+          <CardContent>
+            <ConfirmAction
+              trigger={<Button variant="destructive-outline">Delete project</Button>}
+              action={deleteProjectAction}
+              fields={{ id: project.id, from: "detail" }}
+              title={`Delete ${project.name}?`}
+              description="The project is removed for everyone in the workspace. This cannot be undone."
+              confirmLabel="Delete project"
+            />
+          </CardContent>
+        )}
       </Card>
     </>
   );

@@ -1,9 +1,10 @@
 "use client";
 
-import { LogOut, Settings, ShieldCheck } from "lucide-react";
+import { ChevronsUpDown, LogOut, Moon, Settings, ShieldCheck, Sun } from "lucide-react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { signOutAction } from "@/app/(auth)/actions";
-import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,15 +15,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function UserMenu({ name, email, isAdmin }: { name: string; email: string; isAdmin: boolean }) {
-  const initials = name.split(/\s+/).map((p) => p[0]).join("").slice(0, 2).toUpperCase() || "?";
+  const { resolvedTheme, setTheme } = useTheme();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full" aria-label={`Account menu for ${name}`}>
-          <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">{initials}</span>
-        </Button>
+      <DropdownMenuTrigger
+        className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none data-[state=open]:bg-accent"
+        aria-label={`Account menu for ${name}`}
+      >
+        <Avatar name={name} seed={email} />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-medium">{name}</span>
+          <span className="block truncate text-xs text-muted-foreground">{email}</span>
+        </span>
+        <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-60">
+      <DropdownMenuContent side="top" align="start" className="w-(--radix-dropdown-menu-trigger-width) min-w-56">
         <DropdownMenuLabel className="font-normal">
           <p className="truncate font-medium">{name}</p>
           <p className="truncate text-xs text-muted-foreground">{email}</p>
@@ -33,9 +40,13 @@ export function UserMenu({ name, email, isAdmin }: { name: string; email: string
         </DropdownMenuItem>
         {isAdmin && (
           <DropdownMenuItem asChild>
-            <Link href="/admin"><ShieldCheck aria-hidden /> Admin</Link>
+            <Link href="/admin"><ShieldCheck aria-hidden /> Admin panel</Link>
           </DropdownMenuItem>
         )}
+        <DropdownMenuItem onSelect={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>
+          {resolvedTheme === "dark" ? <Sun aria-hidden /> : <Moon aria-hidden />}
+          {resolvedTheme === "dark" ? "Light theme" : "Dark theme"}
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => signOutAction()}>
           <LogOut aria-hidden /> Sign out

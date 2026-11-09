@@ -12,6 +12,10 @@ describe("API keys", () => {
     expect(a.key.startsWith(a.start)).toBe(true);
   });
 
+  it("marks keys made outside production as test keys", () => {
+    expect(API_KEY_PREFIX).toBe(process.env.NODE_ENV === "production" ? "sk_live_" : "sk_test_");
+  });
+
   it("verifies a key by hashing it again", () => {
     const { key, hash } = generateApiKey();
     expect(hashApiKey(key)).toBe(hash);
@@ -25,5 +29,8 @@ describe("API keys", () => {
     expect(readBearerKey(key)).toBeNull();
     expect(readBearerKey("Bearer not-our-key")).toBeNull();
     expect(readBearerKey(null)).toBeNull();
+    // Keys made before the test/live split (and by the other build) keep working.
+    expect(readBearerKey("Bearer sk_live_abc")).toBe("sk_live_abc");
+    expect(readBearerKey("Bearer sk_test_abc")).toBe("sk_test_abc");
   });
 });

@@ -5,6 +5,7 @@ export type Role = "owner" | "admin" | "member";
 export type Action =
   | "project:read"
   | "project:write"
+  | "project:delete"
   | "workspace:update"
   | "workspace:delete"
   | "member:manage"
@@ -12,8 +13,8 @@ export type Action =
   | "billing:manage";
 
 const grants: Record<Role, readonly Action[]> = {
-  owner: ["project:read", "project:write", "workspace:update", "workspace:delete", "member:manage", "apiKey:manage", "billing:manage"],
-  admin: ["project:read", "project:write", "workspace:update", "member:manage", "apiKey:manage"],
+  owner: ["project:read", "project:write", "project:delete", "workspace:update", "workspace:delete", "member:manage", "apiKey:manage", "billing:manage"],
+  admin: ["project:read", "project:write", "project:delete", "workspace:update", "member:manage", "apiKey:manage"],
   member: ["project:read", "project:write"],
 };
 
@@ -23,9 +24,20 @@ export function can(role: string | null | undefined, action: Action): boolean {
   return role.split(",").some((r) => grants[r.trim() as Role]?.includes(action) ?? false);
 }
 
+const refusals: Record<Action, string> = {
+  "project:read": "You are not a member of this workspace.",
+  "project:write": "You are not a member of this workspace.",
+  "project:delete": "Only owners and admins can delete projects.",
+  "workspace:update": "Only owners and admins can change workspace settings.",
+  "workspace:delete": "Only owners can delete the workspace.",
+  "member:manage": "Only owners and admins can manage members.",
+  "apiKey:manage": "Only owners and admins can manage API keys.",
+  "billing:manage": "Only owners can change the plan.",
+};
+
 export class ForbiddenError extends Error {
-  constructor(action: Action) {
-    super(`Your role does not allow ${action}.`);
+  constructor(public action: Action) {
+    super(refusals[action]);
   }
 }
 
