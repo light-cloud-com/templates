@@ -28,6 +28,28 @@ The app creates the `items` table when it starts, so there is no migration step.
 
 An item is `{ "id", "name", "description", "created_at", "updated_at" }`. `name` is required (1 to 200 characters); `description` is optional. Errors are JSON `{ "error": "..." }`: `400` for invalid input, `404` for an unknown item.
 
+## Project structure
+
+```text
+.
+├── src/
+│   ├── server.js             # Creates the table, starts the server, shuts down on SIGTERM
+│   ├── app.js                # createApp(sql): mounts routes, JSON 404 and error handler
+│   ├── config.js             # Settings read from the environment
+│   ├── db.js                 # postgres.js client and the items table
+│   ├── routes/
+│   │   ├── index.js          # GET / and GET /health
+│   │   └── items.js          # /items CRUD
+│   └── lib/
+│       └── validation.js     # Request body and query checks
+├── test/
+│   ├── validation.test.js         # Unit tests
+│   ├── app.test.js                # HTTP tests with a fake client, no database needed
+│   └── items.integration.test.js  # Full CRUD flow, runs when DATABASE_URL is set
+├── .env.example              # Environment variables the app reads
+└── package.json
+```
+
 ## Run locally
 
 You need Node.js 22 or newer and Docker (for the database).
@@ -39,7 +61,15 @@ export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
 npm start
 ```
 
-The API is now on http://localhost:8080.
+The API is now on http://localhost:8080. `npm run dev` restarts it when a file changes.
+
+## Test
+
+```bash
+npm test
+```
+
+Without `DATABASE_URL` the integration test is skipped; with it set (as above) it runs the whole CRUD flow against the database.
 
 ## Try it
 
@@ -62,8 +92,8 @@ On Light Cloud, use your app's URL instead of http://localhost:8080.
 
 ## Make it yours
 
-The code is in `src/index.js`. Rename `items`, add columns to the `CREATE TABLE` statement and the validation, and push: Light Cloud redeploys on every push.
+Routes are in `src/routes/`, the table in `src/db.js` and the checks in `src/lib/validation.js`. Rename `items`, add columns to the `CREATE TABLE` statement and the validation, and push: Light Cloud redeploys on every push.
 
 ## License
 
-MIT
+MIT, see [LICENSE](./LICENSE).

@@ -6,7 +6,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "@hono/node-server": "2.1.6",
