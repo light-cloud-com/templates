@@ -2,7 +2,7 @@
 
 A small REST API for one resource, `items`, built with Flask and psycopg 3, served by Gunicorn. Deploy it with a PostgreSQL database in one click, then make it yours.
 
-[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://console.light-cloud.com/new?template=crud-api-flask)
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/crud-api-flask)
 
 ## How it works
 

@@ -50,7 +50,7 @@ writeFileSync(cataloguePath, JSON.stringify(catalogue, null, 2) + '\n');
 const deployUrl = (t) =>
   t.repo
     ? `https://console.light-cloud.com/new?repo=https://github.com/${t.repo}`
-    : `https://console.light-cloud.com/new?template=${t.slug}`;
+    : `https://www.light-cloud.com/templates/${t.slug}`;
 const rows = catalogue.map(
   (t) =>
     `| [${t.name}](./${t.folder}) | ${t.description} | ${t.language} | ${t.database ? 'PostgreSQL' : ''} | [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](${deployUrl(t)}) |`
