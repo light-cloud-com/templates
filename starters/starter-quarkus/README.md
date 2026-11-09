@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://console.light-cloud.com/new?repo=https://github.com/light-cloud-com/starter-quarkus"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
+  <a href="https://www.light-cloud.com/templates/starter-quarkus"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
 </p>
 
 ---

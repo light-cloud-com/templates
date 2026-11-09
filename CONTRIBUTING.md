@@ -19,15 +19,14 @@ A good template:
 
 ## Improve one of ours
 
-Templates without a `repo` in `catalogue.json` live only here: open issues and pull requests in this repository. The rest are copies of their own repositories (`light-cloud-com/starter-*`), so change them there. Maintainers refresh the copies with:
+Every template here lives only in this repository, so open issues and pull requests here. The one exception is Open SaaS, a copy of `light-cloud-com/starter-opensaas` (the only entry in `catalogue.json` with a `repo`). Maintainers refresh it with:
 
 ```bash
-node scripts/sync-starters.mjs            # every template
-node scripts/sync-starters.mjs starter-react crud-api-express
+node scripts/sync-starters.mjs
 ```
 
-The script copies each template from its repository, records the commit in `catalogue.json`, and rewrites the table in `README.md`.
+The script copies it from its repository, records the commit in `catalogue.json`, and rewrites the table in `README.md`.
 
 ## Add one of ours
 
-Add an entry to `catalogue.json` (folder, slug, name, description, language, database, repo) and run the script. Commit each new template on its own, with a subject people would search for (framework, language, what it is, e.g. "Express CRUD REST API starter with PostgreSQL for Node.js") and a short body saying what it does and that it deploys to Light Cloud in one click. The gallery gets its list from the platform, not this file, so add the template there as well.
+Add the template's folder and an entry in `catalogue.json` (folder, slug, name, description, language, database), then run the script to refresh the table in `README.md`. Commit each new template on its own, with a subject people would search for (framework, language, what it is, e.g. "Express CRUD REST API starter with PostgreSQL for Node.js") and a short body saying what it does and that it deploys to Light Cloud in one click. The gallery gets its list from the platform, not this file, so add the template there as well.

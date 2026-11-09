@@ -18,9 +18,7 @@
     "name": "React",
     "description": "Modern React app with Vite",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-react",
-    "commit": "e452ba939a2851f4eaef36f6b50236fb083c54a1"
+    "database": false
   },
   {
     "folder": "starters/starter-vue",
@@ -28,9 +26,7 @@
     "name": "Vue",
     "description": "Vue 3 app with Vite",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-vue",
-    "commit": "f8c67ee1217ec893d78ce0a773d57a134dedeca7"
+    "database": false
   },
   {
     "folder": "starters/starter-angular",
@@ -38,9 +34,7 @@
     "name": "Angular",
     "description": "Angular 21 with standalone components",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-angular",
-    "commit": "b8b68f6948c223cb673064f3dd228092c6d589b4"
+    "database": false
   },
   {
     "folder": "starters/starter-svelte",
@@ -48,9 +42,7 @@
     "name": "Svelte",
     "description": "Svelte app with Vite",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-svelte",
-    "commit": "fa8a3bc5747ddd5b5fa15757998d04fd56a6449c"
+    "database": false
   },
   {
     "folder": "starters/starter-html",
@@ -58,9 +50,7 @@
     "name": "Static HTML",
     "description": "Simple HTML, CSS, JavaScript",
     "language": "HTML",
-    "database": false,
-    "repo": "light-cloud-com/starter-html",
-    "commit": "794d25e510e46c6bfe9882654ea657ea309ebf66"
+    "database": false
   },
   {
     "folder": "starters/starter-go",
@@ -68,9 +58,7 @@
     "name": "Go",
     "description": "Go REST API (net/http)",
     "language": "Go",
-    "database": false,
-    "repo": "light-cloud-com/starter-go",
-    "commit": "c812b589cd2adee3f683ab63aa75c876b671340e"
+    "database": false
   },
   {
     "folder": "starters/starter-php",
@@ -78,9 +66,7 @@
     "name": "PHP",
     "description": "Slim Framework REST API",
     "language": "PHP",
-    "database": false,
-    "repo": "light-cloud-com/starter-php",
-    "commit": "6a688fffaa7524977528e324ea444215dd6b665a"
+    "database": false
   },
   {
     "folder": "starters/starter-dotnet",
@@ -88,9 +74,7 @@
     "name": ".NET",
     "description": "ASP.NET Core REST API",
     "language": ".NET",
-    "database": false,
-    "repo": "light-cloud-com/starter-dotnet",
-    "commit": "b4fa7aca5e2103daf9af791b7e79145dfc2992d7"
+    "database": false
   },
   {
     "folder": "starters/starter-dockerfile",
@@ -98,9 +82,7 @@
     "name": "Dockerfile",
     "description": "Custom Dockerfile template",
     "language": "Docker",
-    "database": false,
-    "repo": "light-cloud-com/starter-dockerfile",
-    "commit": "9f238af7d9583705d2ce3e1a5f0677894969e5ec"
+    "database": false
   },
   {
     "folder": "starters/starter-nextjs",
@@ -108,9 +90,7 @@
     "name": "Next.js",
     "description": "Next.js with the App Router, rendered on a server",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-nextjs",
-    "commit": "38ea478a72c75a1266137c026b58261e6e7d0370"
+    "database": false
   },
   {
     "folder": "starters/starter-nuxt",
@@ -118,9 +98,7 @@
     "name": "Nuxt",
     "description": "Nuxt 4 with server-side rendering",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-nuxt",
-    "commit": "15b9820d79b1579cc860775a6ab0269090a3c233"
+    "database": false
   },
   {
     "folder": "starters/starter-sveltekit",
@@ -128,9 +106,7 @@
     "name": "SvelteKit",
     "description": "SvelteKit with the Node adapter",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-sveltekit",
-    "commit": "112303cb49dd4962537188373f94fafff472b46a"
+    "database": false
   },
   {
     "folder": "starters/starter-remix",
@@ -138,9 +114,7 @@
     "name": "Remix",
     "description": "Remix v2 on Vite",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-remix",
-    "commit": "0f79c4377712a1fc143e911f50c0a39ff3669617"
+    "database": false
   },
   {
     "folder": "starters/starter-astro",
@@ -148,9 +122,7 @@
     "name": "Astro",
     "description": "Astro, prerendered to static files",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-astro",
-    "commit": "acc00d5d394e88f308ae19d7cb655120198ae2d1"
+    "database": false
   },
   {
     "folder": "starters/starter-solid",
@@ -158,9 +130,7 @@
     "name": "SolidJS",
     "description": "SolidJS app with Vite",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-solid",
-    "commit": "2002cf822941f1922f0499286d4cf2636c92492f"
+    "database": false
   },
   {
     "folder": "starters/starter-express",
@@ -168,9 +138,7 @@
     "name": "Express",
     "description": "Express API with CORS and a health check",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-express",
-    "commit": "cfbbf49c9307351ebf2d00939a84e8cccd38b23b"
+    "database": false
   },
   {
     "folder": "starters/starter-fastify",
@@ -178,9 +146,7 @@
     "name": "Fastify",
     "description": "Fastify API with structured logging",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-fastify",
-    "commit": "7bed7c75eb80d5c9e14e2788f9dffe809c68ed79"
+    "database": false
   },
   {
     "folder": "starters/starter-hono",
@@ -188,9 +154,7 @@
     "name": "Hono",
     "description": "Hono API on the Node server adapter",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-hono",
-    "commit": "ab989d2b7b91f1e72875e5d3f8e7aad8a500b57d"
+    "database": false
   },
   {
     "folder": "starters/starter-nestjs",
@@ -198,9 +162,7 @@
     "name": "NestJS",
     "description": "NestJS API with TypeScript",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-nestjs",
-    "commit": "3a57e5d1507c741f5bf8d2c563fdd27e4cb8fa39"
+    "database": false
   },
   {
     "folder": "starters/starter-fastapi",
@@ -208,9 +170,7 @@
     "name": "FastAPI",
     "description": "FastAPI service served by Uvicorn",
     "language": "Python",
-    "database": false,
-    "repo": "light-cloud-com/starter-fastapi",
-    "commit": "9e4ac4956b16ab36b7ffa4025e33edd3fb607157"
+    "database": false
   },
   {
     "folder": "starters/starter-flask",
@@ -218,9 +178,7 @@
     "name": "Flask",
     "description": "Flask service served by Waitress",
     "language": "Python",
-    "database": false,
-    "repo": "light-cloud-com/starter-flask",
-    "commit": "d2bf0d5387ff372d797a9677902b8957f5423f8e"
+    "database": false
   },
   {
     "folder": "starters/starter-gin",
@@ -228,9 +186,7 @@
     "name": "Gin",
     "description": "Gin HTTP service in Go",
     "language": "Go",
-    "database": false,
-    "repo": "light-cloud-com/starter-gin",
-    "commit": "fa14b08e3f0d5bd96aa58f6e31ebe8a3a0497512"
+    "database": false
   },
   {
     "folder": "starters/starter-echo",
@@ -238,9 +194,7 @@
     "name": "Echo",
     "description": "Echo HTTP service in Go",
     "language": "Go",
-    "database": false,
-    "repo": "light-cloud-com/starter-echo",
-    "commit": "f770e28076229376b2f728f8c8a07f0e826e3a53"
+    "database": false
   },
   {
     "folder": "starters/starter-fiber",
@@ -248,9 +202,7 @@
     "name": "Fiber",
     "description": "Fiber HTTP service in Go",
     "language": "Go",
-    "database": false,
-    "repo": "light-cloud-com/starter-fiber",
-    "commit": "ef155890e54cb81c4e5fadb2ca8538ff67580c4f"
+    "database": false
   },
   {
     "folder": "starters/starter-springboot",
@@ -258,9 +210,7 @@
     "name": "Spring Boot",
     "description": "Spring Boot web service, built with Maven",
     "language": "Java",
-    "database": false,
-    "repo": "light-cloud-com/starter-springboot",
-    "commit": "37695efb0db508a3ae6488ef26b8fa580ebe9861"
+    "database": false
   },
   {
     "folder": "starters/starter-quarkus",
@@ -268,9 +218,7 @@
     "name": "Quarkus",
     "description": "Quarkus REST service, built with Maven",
     "language": "Java",
-    "database": false,
-    "repo": "light-cloud-com/starter-quarkus",
-    "commit": "af34e2ed4f5d0ade2a02c294c93b0939a8997dd9"
+    "database": false
   },
   {
     "folder": "starters/starter-sinatra",
@@ -278,9 +226,7 @@
     "name": "Sinatra",
     "description": "Sinatra service served through Rack",
     "language": "Ruby",
-    "database": false,
-    "repo": "light-cloud-com/starter-sinatra",
-    "commit": "37415f71b6c8ed2003bafe733e74cadc7d4e7885"
+    "database": false
   },
   {
     "folder": "starters/starter-docusaurus",
@@ -288,9 +234,7 @@
     "name": "Docusaurus",
     "description": "Docusaurus documentation site",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-docusaurus",
-    "commit": "74348be01937939747fb3e17f1bf7cd60cce506f"
+    "database": false
   },
   {
     "folder": "starters/starter-eleventy",
@@ -298,9 +242,7 @@
     "name": "Eleventy",
     "description": "Eleventy static site generator",
     "language": "JavaScript",
-    "database": false,
-    "repo": "light-cloud-com/starter-eleventy",
-    "commit": "ce148661a2b18e5dc4ceb246f5639611f89d673e"
+    "database": false
   },
   {
     "folder": "starters/crud-api-express",
