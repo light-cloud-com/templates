@@ -1,115 +1,147 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# Eleventy Blog Starter
 
-<h1 align="center">Eleventy Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![Eleventy 3](https://img.shields.io/badge/Eleventy-3-222222?logo=eleventy&logoColor=white)](https://www.11ty.dev) [![Nunjucks](https://img.shields.io/badge/templates-Nunjucks-1C4913)](https://mozilla.github.io/nunjucks/) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/eleventy-blog-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/eleventy-blog-starter)
 
-<p align="center">
-  An Eleventy static site generator project, ready to deploy on Light Cloud.
-</p>
+An Eleventy 3 blog starter that builds Markdown posts and Nunjucks layouts into plain static HTML, with no client-side JavaScript. It is a small static site generator boilerplate for developers and writers who want a content-first site with a post list, post pages, an about page and site-wide data, ready to rename and write in. It deploys to any static host, and to Light Cloud in one click on the Free plan.
 
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-eleventy"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
+## Screenshot
 
----
+<img alt="Eleventy Blog Starter: home page with a welcome heading and the list of posts, newest first" src="docs/screenshots/home-light.png" width="100%">
+<img alt="Eleventy Blog Starter: a blog post page with its title, date and Markdown content" src="docs/screenshots/post-light.png" width="100%">
+<img alt="Eleventy Blog Starter: about page explaining where pages, layouts, data and posts live" src="docs/screenshots/about-light.png" width="100%">
 
 ## Features
 
-- Eleventy 3 with an ESM config (`eleventy.config.js`)
-- Markdown and Nunjucks content with a base layout, a post layout and partials
-- A `posts` collection set up by directory data, listed newest first on the home page
-- Site-wide data in `src/_data/site.json`, CSS copied through from `src/assets`
-- Builds `src` to `_site`, no client-side JavaScript
+- Eleventy 3.1 with an ESM config file, `eleventy.config.js`
+- Markdown and Nunjucks content, with a base layout, a post layout and header and footer partials
+- A `posts` collection set up by directory data (`src/posts/posts.json`): every Markdown file in the folder gets the post layout, the `posts` tag and a `/posts/<file name>/` URL
+- The home page lists posts newest first, with readable dates from two small filters (`readableDate`, `isoDate`)
+- Site title and description in `src/_data/site.json`, used in the header and the `<title>` and description tags
+- CSS in `src/assets` copied to the output as is
+- Builds `src/` to `_site/`, with no client-side JavaScript
+- Two sample posts and an about page
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    content["src/*.md, src/posts/*.md"] --> eleventy["Eleventy"]
-    layouts["src/_includes (layouts, partials)"] --> eleventy
-    data["src/_data/site.json"] --> eleventy
-    eleventy --> site["_site/ (static HTML)"]
-    site -->|served by| lc["Light Cloud CDN"]
+You need Node.js 18 or later and npm.
+
+```bash
+git clone https://github.com/light-cloud-templates/eleventy-blog-starter.git
+cd eleventy-blog-starter
+npm install
+npm run dev
 ```
+
+Open <http://localhost:8080>. Eleventy rebuilds and reloads the page when you save a file in `src/`.
+
+Other ways to start:
+
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/eleventy-blog-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/eleventy-blog-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/eleventy-blog-starter)
+
+The Deploy button copies this template into your GitHub account and creates a static site: Light Cloud runs `npm run build` and serves the `_site` folder from a CDN.
+
+There are no secrets to fill in. Every push to the default branch deploys again. Static sites run on the Free plan.
+
+### Deploy anywhere else
+
+This is a standard Eleventy project with no Light Cloud code in it. Run `npm run build` and upload `_site/` to any static file host, or point the host's build settings at `npm run build` with `_site` as the output folder.
 
 ## Project structure
 
 ```text
 .
-├── eleventy.config.js        # Input/output folders, passthrough copy, date filters
+├── eleventy.config.js        # input and output folders, passthrough copy, date filters
+├── package.json              # build and dev scripts
 └── src/
-    ├── _data/site.json       # Site title and description
+    ├── _data/site.json       # site title and description
     ├── _includes/
-    │   ├── layouts/          # base.njk, post.njk
-    │   └── partials/         # header.njk, footer.njk
-    ├── assets/css/main.css   # Copied to _site/assets as is
+    │   ├── layouts/
+    │   │   ├── base.njk      # HTML document, header, footer
+    │   │   └── post.njk      # post title, date, content
+    │   └── partials/
+    │       ├── header.njk    # site name and navigation
+    │       └── footer.njk
+    ├── assets/css/main.css   # copied to _site/assets as is
     ├── posts/
-    │   ├── posts.json        # Layout, tag and URL for every post in the folder
-    │   └── *.md              # Posts
-    ├── index.njk             # Home page with the post list
+    │   ├── posts.json        # layout, tag and URL for every post in the folder
+    │   ├── hello-world.md
+    │   └── deploying-to-light-cloud.md
+    ├── index.njk             # home page with the post list
     └── about.md              # /about/
 ```
 
-## Local development
+## Pages
+
+| Path | Source | What it shows |
+| --- | --- | --- |
+| `/` | `src/index.njk` | Welcome text and the list of posts, newest first |
+| `/about/` | `src/about.md` | Where pages, layouts, data and posts live |
+| `/posts/<file name>/` | `src/posts/*.md` | One page per post, for example `/posts/hello-world/` |
+
+## Environment variables
+
+There are none. The site title and description live in `src/_data/site.json`.
+
+## Testing
+
+There are no tests. The build is the check: it fails on a template error or a missing layout.
 
 ```bash
-npm install       # install dependencies
-npm run dev       # dev server with live reload on http://localhost:8080
-npm run build     # static build into _site/
+npm run build
 ```
 
-To add a post, create a Markdown file in `src/posts/` with a `title` and a `date`.
+## How it works
 
-## Deploy to Light Cloud
+```mermaid
+flowchart LR
+    content["src/*.md and src/posts/*.md"] --> eleventy["Eleventy<br/>npm run build"]
+    layouts["src/_includes<br/>layouts and partials"] --> eleventy
+    data["src/_data/site.json"] --> eleventy
+    eleventy --> site["_site/<br/>static HTML and CSS"]
+    site --> cdn["Static host or CDN"]
+```
 
-### 1. Create an Account
+Eleventy reads every Markdown and Nunjucks file in `src/`, wraps it in its layout, and writes one HTML file per page to `_site/`. Nothing runs on a server after the build.
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+## FAQ
 
-### 2. Create New Application
+### How do I add a blog post in Eleventy?
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Static Site"** as the deployment type
-3. Choose **"Eleventy"** as the framework
+Create a Markdown file in `src/posts/` with a `title`, a `date` and, optionally, a `description` in the front matter. `posts.json` gives it the post layout and a URL, and it appears on the home page.
 
-### 3. Connect Repository
+### How do I add a page?
 
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
+Create a Markdown or Nunjucks file in `src/` with `layout: layouts/base.njk` and a `permalink`, as in `src/about.md`. Add the link to `src/_includes/partials/header.njk`.
 
-### 4. Configure Build Settings
+### How do I change the site title?
 
-Light Cloud will auto-detect your settings, but you can verify:
+Edit `src/_data/site.json`. The title is used in the header and in every page's `<title>`.
 
-| Setting | Value |
-|---------|-------|
-| Build Command | `npm run build` |
-| Output Directory | `_site` |
+### Does the site ship any JavaScript?
 
-### 5. Deploy
+No. The output is HTML and one CSS file. Add a script to `src/assets` and a `<script>` tag in `base.njk` if you need one.
 
-Click **"Deploy"** and your site will be live in seconds!
+### Can I deploy it without Light Cloud?
 
-Your site will be available at `https://your-app.light-cloud.io`
+Yes. `npm run build` writes plain files to `_site/`, which any static host serves.
 
-## Learn More
+## Related templates
 
-- [Eleventy documentation](https://www.11ty.dev/docs/)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+- [astro-blog-starter](https://github.com/light-cloud-templates/astro-blog-starter): a static blog built with Astro
+- [docusaurus-docs-starter](https://github.com/light-cloud-templates/docusaurus-docs-starter): a static documentation site with a blog
+- [static-html-website-starter](https://github.com/light-cloud-templates/static-html-website-starter): a plain HTML and CSS site with no build step
 
-## License
+## Licence
 
-[MIT](./LICENSE)
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
