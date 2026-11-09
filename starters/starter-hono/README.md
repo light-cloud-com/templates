@@ -19,7 +19,20 @@
 - Hono 4 on `@hono/node-server`
 - REST API with health check endpoint
 - ES modules
+- Routes grouped in sub-apps, app built separately from the server so tests call it with `app.request()`
+- Unmatched routes and errors answer in JSON
+- Graceful shutdown on `SIGTERM`
+- Tests with the built-in Node test runner, no extra dependencies
 - Listens on `$PORT`, defaulting to 3000
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| server["src/server.js<br/>@hono/node-server on PORT"]
+    server --> app["src/app.js<br/>JSON 404 and errors"]
+    app --> routes["src/routes/root.js<br/>/ and /health"]
+```
 
 ## API Endpoints
 
@@ -28,7 +41,25 @@
 | GET | `/` | Welcome message and API info |
 | GET | `/health` | Health check with uptime |
 
+## Project structure
+
+```text
+.
+├── src/
+│   ├── app.js              # Hono app: mounts routes, JSON 404 and error handler
+│   ├── server.js           # Starts the Node server, shuts down on SIGTERM
+│   ├── config.js           # Settings read from the environment
+│   └── routes/
+│       └── root.js         # GET / and GET /health
+├── test/
+│   └── app.test.js         # node:test tests using app.request()
+├── .env.example            # Environment variables the app reads
+└── package.json
+```
+
 ## Local Development
+
+You need Node.js 22 or newer.
 
 ```bash
 # Install dependencies
@@ -39,9 +70,12 @@ npm start
 
 # Start with file watching
 npm run dev
+
+# Run the tests
+npm test
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be available at `http://localhost:3000`. `.env.example` lists the environment variables the app reads.
 
 ## Deploy to Light Cloud
 
