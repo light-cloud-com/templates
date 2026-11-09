@@ -1,125 +1,170 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# Remix v2 Vite Starter
 
-<h1 align="center">Remix Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![Remix 2](https://img.shields.io/badge/Remix-2-000000?logo=remix&logoColor=white)](https://remix.run) [![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev) [![Node.js 20](https://img.shields.io/badge/Node.js-20-5FA04E?logo=nodedotjs&logoColor=white)](https://nodejs.org) [![Tests: Vitest](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](test) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/remix-vite-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/remix-vite-starter)
 
-<p align="center">
-  A Remix v2 app on Vite, ready to deploy on Light Cloud.
-</p>
+A Remix v2 starter on Vite with React 18, TypeScript and Tailwind CSS, rendered on a Node.js server by `remix-serve`. It is a small boilerplate for developers who want a working server-rendered Remix app with a root layout, route loaders, a JSON resource route, ESLint and Vitest already set up. It runs on any host that runs Node.js 20, and deploys to Light Cloud in one click.
 
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-remix"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
+## Screenshot
 
----
+<img alt="Remix v2 Vite Starter: home page with a welcome heading and the render time from the route loader" src="docs/screenshots/home-light.png" width="100%">
+<img alt="Remix v2 Vite Starter: about page explaining where routes, components and resource routes live" src="docs/screenshots/about-light.png" width="100%">
 
 ## Features
 
-- Remix v2 on Vite, React 18 with server-side rendering, TypeScript
-- Root layout with a shared header component and a root `loader`
-- Home (with a `loader`), About and a resource route at `/api/health`
-- Tailwind CSS, ESLint and Vitest
-- Served by `remix-serve`
+- Remix 2.17 on Vite 5, React 18 with server-side rendering and streaming (`renderToPipeableStream`)
+- TypeScript, with the `~/` import alias for `app/`
+- Root layout in `app/root.tsx` with a shared header and a root `loader` that passes `SITE_NAME` to it
+- Home page with a `loader`, an About page, and a resource route at `GET /api/health`
+- Tailwind CSS 3 through PostCSS
+- Three Remix v3 future flags turned on: `v3_fetcherPersist`, `v3_relativeSplatPath`, `v3_throwAbortReason`
+- ESLint 8 with React, hooks, accessibility, import and TypeScript rules
+- A Vitest test for the resource route, kept in `test/` because every file in `app/routes/` is a route
+- Served by `remix-serve`, which listens on `PORT`
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    browser["Browser"] -->|HTTPS| server["Light Cloud container<br/>remix-serve on PORT"]
-    server --> routes["app/routes<br/>loaders run on the server, pages hydrate in the browser"]
-    server --> api["app/routes/api.health.ts<br/>JSON"]
+You need Node.js 20 or later and npm.
+
+```bash
+git clone https://github.com/light-cloud-templates/remix-vite-starter.git
+cd remix-vite-starter
+npm install
+cp .env.example .env
+npm run dev
 ```
+
+Open <http://localhost:5173>. Edit `app/routes/_index.tsx` and the page updates.
+
+Other ways to start:
+
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/remix-vite-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/remix-vite-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/remix-vite-starter)
+
+The Deploy button copies this template into your GitHub account and creates a server app: Light Cloud runs `npm run build`, then `npm start` (`remix-serve ./build/server/index.js`) in a container that listens on the port in `PORT`.
+
+There are no secrets to fill in. Every push to the default branch deploys again. The Free plan includes up to 3 server apps.
+
+### Deploy anywhere else
+
+This is a standard Remix app with no Light Cloud code in it. Any host that runs Node.js 20 or later runs it: `npm ci`, `npm run build`, then `npm start`. `remix-serve` reads `PORT` (default `3000`) and serves the browser assets from `build/client`.
 
 ## Project structure
 
 ```text
 .
 ├── app/
-│   ├── root.tsx                # Document, layout, root loader
+│   ├── root.tsx                # document, layout, root loader
 │   ├── components/SiteHeader.tsx
 │   ├── routes/
 │   │   ├── _index.tsx          # /
 │   │   ├── about.tsx           # /about
-│   │   └── api.health.ts       # GET /api/health -> {"status":"ok"}
-│   ├── entry.client.tsx
-│   ├── entry.server.tsx
-│   └── tailwind.css
-├── test/                       # Vitest tests (kept out of app/routes, where every file is a route)
-├── public/                     # Files served from /
-├── .env.example
-├── .eslintrc.cjs
+│   │   └── api.health.ts       # GET /api/health (resource route)
+│   ├── entry.client.tsx        # hydrates the document in the browser
+│   ├── entry.server.tsx        # streams the HTML on the server
+│   └── tailwind.css            # Tailwind directives
+├── test/                       # Vitest tests
+├── public/                     # files served from / (favicon.ico)
+├── .env.example                # the variables, for local runs
+├── .eslintrc.cjs               # ESLint config
+├── postcss.config.js
 ├── tailwind.config.ts
-└── vite.config.ts
+├── tsconfig.json
+└── vite.config.ts              # Remix Vite plugin and future flags
 ```
 
-## Local development
+## Pages
+
+| Path | File | What it shows |
+| --- | --- | --- |
+| `/` | `app/routes/_index.tsx` | Welcome page with the render time from its `loader` |
+| `/about` | `app/routes/about.tsx` | Where routes, components and resource routes live |
+
+## API endpoints
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/health` | Answers `200` with `{ "status": "ok" }` |
 
 ```bash
-npm install         # install dependencies
-npm run dev         # dev server on http://localhost:5173
-npm run lint        # ESLint
-npm run typecheck   # TypeScript
-npm test            # Vitest
-npm run build       # production build into build/
-npm start           # run the production server (honours PORT)
+curl http://localhost:5173/api/health
 ```
+
+After `npm run build && npm start` the server is on port `3000`; on Light Cloud, use your app's URL.
 
 ## Environment variables
 
-Copy `.env.example` to `.env`. Remix reads `process.env` on the server only, in loaders and actions, when a request comes in; the root loader passes `SITE_NAME` to the header. Send the browser only what it needs through loader data, never secrets.
+| Name | Required | Default | What it does |
+| --- | --- | --- | --- |
+| `PORT` | No | `3000` | Port `remix-serve` listens on. Set by Light Cloud. |
+| `SITE_NAME` | No | `Remix App` | Site name in the header, read by the root loader on each request. |
 
-## Deploy to Light Cloud
+Remix reads `process.env` on the server only, in loaders and actions. Pass what the browser needs through loader data, and never send secrets that way. `npm run dev` loads `.env`; `npm start` reads the real environment.
 
-### 1. Create an Account
+## Testing
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+```bash
+npm test            # Vitest
+npm run lint        # ESLint
+npm run typecheck   # TypeScript
+```
 
-### 2. Create New Application
+## How it works
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Container"** as the deployment type
-3. Choose **"Remix"** as the framework
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant S as remix-serve
+    participant L as Route loaders
+    B->>S: GET /
+    S->>L: root loader and _index loader
+    L-->>S: siteName, renderedAt
+    S-->>B: streamed HTML
+    B->>B: hydrate with React
+    B->>S: GET /api/health
+    S-->>B: JSON status ok
+```
 
-### 3. Connect Repository
+For each request Remix runs the loaders of every matching route on the server, renders the page with their data, and streams the HTML. A route with a `loader` and no default export, such as `api.health.ts`, is a resource route that answers with the loader's response only.
 
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
+## FAQ
 
-### 4. Configure Settings
+### How do I add a route in Remix?
 
-Light Cloud will auto-detect your settings, but you can verify:
+Create a file in `app/routes/`: `contact.tsx` becomes `/contact`, and dots make path segments, so `blog.first-post.tsx` becomes `/blog/first-post`. Add a `NavLink` to it in `app/components/SiteHeader.tsx`.
 
-| Setting | Value |
-|---------|-------|
-| Port | `3000` |
-| Start Command | `npm start` |
+### How do I add an API endpoint in Remix?
 
-### 5. Deploy
+Add a resource route: a file in `app/routes/` that exports a `loader` (for `GET`) or an `action` (for `POST`, `PUT`, `DELETE`) and no default component. `api.health.ts` is the example.
 
-Click **"Deploy"** and your app will be live in minutes!
+### Should I use Remix v2 or React Router v7?
 
-Your app will be available at `https://your-app.light-cloud.io`
+Remix v2 continues as React Router v7, and the upgrade path is to turn on the remaining Remix v3 future flags, then switch packages. This template already turns on three of those flags in `vite.config.ts`.
 
-## Learn More
+### How do I use environment variables in Remix?
 
-This starter began as `create-remix` output and adds the structure described above.
+Read `process.env.NAME` in a `loader` or `action`, which run on the server. Return what the page needs from the loader, as the root loader does with `SITE_NAME`.
 
-- [Remix documentation](https://remix.run/docs)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+### Can I deploy it without Light Cloud?
 
-## License
+Yes. It is a plain Remix app: any host with Node.js 20 or later runs it with `npm run build` and `npm start`.
 
-[MIT](./LICENSE)
+## Related templates
+
+- [nextjs-app-router-starter](https://github.com/light-cloud-templates/nextjs-app-router-starter): server-rendered React with the Next.js App Router
+- [react-vite-starter](https://github.com/light-cloud-templates/react-vite-starter): a React single-page app served as static files
+- [sveltekit-starter](https://github.com/light-cloud-templates/sveltekit-starter): the same pages in SvelteKit
+- [nuxt-ssr-starter](https://github.com/light-cloud-templates/nuxt-ssr-starter): the same pages in Nuxt and Vue
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
