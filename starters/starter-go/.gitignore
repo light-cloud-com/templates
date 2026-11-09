@@ -1,21 +1,17 @@
-# Binaries
+# Build output
+/bin/
+/main
+/starter-go
 *.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-bin/
 
-# Test binary and coverage
+# Test and coverage output
 *.test
 *.out
 
-# Go workspace file
+# Local settings
+.env
 go.work
 go.work.sum
-
-.env
 .DS_Store
-.idea
-.vscode/*
-!.vscode/extensions.json
+.idea/
+.vscode/

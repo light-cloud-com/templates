@@ -16,10 +16,25 @@
 
 ## Features
 
-- Standard library `net/http` — no framework
-- REST API with health check endpoint
-- Compiles to a single static binary
-- Docker-ready for Cloud Run
+- Standard library `net/http`, no framework
+- Health check endpoint with uptime
+- Table-driven handler tests with `net/http/httptest`
+- Structured JSON logs with `log/slog`, one line per request
+- Graceful shutdown on `SIGTERM`
+- Compiles to a single static binary, Dockerfile included
+- Listens on `$PORT`, defaulting to 8080
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| mw["Middleware<br/>logRequests"]
+    mw --> router["Router<br/>internal/server"]
+    router --> handlers["Handlers<br/>/ and /health"]
+    main["main.go"] -.->|"reads PORT<br/>internal/config"| router
+```
+
+`main.go` only wires things together: it loads the config, builds the router and runs the server until Light Cloud (or Ctrl+C) asks it to stop.
 
 ## API Endpoints
 
@@ -28,14 +43,31 @@
 | GET | `/` | Welcome message and API info |
 | GET | `/health` | Health check with uptime |
 
+## Project structure
+
+```text
+.
+├── main.go                  # Entry point: config, logger, server, graceful shutdown
+├── internal/
+│   ├── config/              # Settings from environment variables
+│   └── server/              # Routes, handlers, middleware and their tests
+├── Dockerfile               # Image Light Cloud builds
+├── .env.example             # Local settings, copy to .env
+├── Makefile                 # make run, make test, make build
+└── go.mod
+```
+
+Code under `internal/` can only be imported by this module, which keeps the HTTP layer private to the app.
+
 ## Local Development
 
-```bash
-# Run the server
-go run main.go
+You need Go 1.25 or newer.
 
-# Build a binary
-go build -o server
+```bash
+cp .env.example .env   # optional, make run loads it
+make run               # or: go run .
+make test              # go vet ./... and go test ./...
+make build             # static binary in bin/server
 ```
 
 The API will be available at `http://localhost:8080`

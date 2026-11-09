@@ -1,63 +1,57 @@
+// Command starter-go serves a small JSON API with the standard library.
 package main
 
 import (
-	"encoding/json"
-	"log"
+	"context"
+	"errors"
+	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
+
+	"starter-go/internal/config"
+	"starter-go/internal/server"
 )
 
-var startTime = time.Now()
-
-type Response struct {
-	Message   string            `json:"message,omitempty"`
-	Version   string            `json:"version,omitempty"`
-	Endpoints map[string]string `json:"endpoints,omitempty"`
-	Status    string            `json:"status,omitempty"`
-	Timestamp string            `json:"timestamp,omitempty"`
-	Uptime    float64           `json:"uptime,omitempty"`
-}
-
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
+	if err := run(); err != nil {
+		slog.Error("server stopped", "error", err)
+		os.Exit(1)
 	}
-
-	http.HandleFunc("/", rootHandler)
-	http.HandleFunc("/health", healthHandler)
-
-	log.Printf("Server running on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
+func run() error {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	cfg := config.Load()
+
+	srv := &http.Server{
+		Addr:              ":" + cfg.Port,
+		Handler:           server.New(),
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
-	response := Response{
-		Message: "Welcome to your Go API",
-		Version: "1.0.0",
-		Endpoints: map[string]string{
-			"health": "/health",
-			"root":   "/",
-		},
+	errCh := make(chan error, 1)
+	go func() {
+		slog.Info("listening", "port", cfg.Port)
+		if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+			errCh <- err
+		}
+	}()
+
+	select {
+	case err := <-errCh:
+		return err
+	case <-ctx.Done():
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	response := Response{
-		Status:    "healthy",
-		Timestamp: time.Now().UTC().Format(time.RFC3339),
-		Uptime:    time.Since(startTime).Seconds(),
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	// Cloud Run sends SIGTERM and waits 10 seconds before it stops the container.
+	slog.Info("shutting down")
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	return srv.Shutdown(shutdownCtx)
 }
