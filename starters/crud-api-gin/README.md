@@ -8,8 +8,9 @@ A small REST API for one resource, `items`, built with Gin and pgx. Deploy it wi
 
 ```mermaid
 flowchart LR
-    client["Client (browser, curl, app)"] -->|HTTPS JSON| api["Gin API"]
-    api -->|SQL over TLS| db[("PostgreSQL<br/>items table")]
+    client["Client (browser, curl, app)"] -->|HTTPS JSON| server["Gin routes and handlers<br/>internal/server"]
+    server -->|Store interface| store["PostgreSQL store (pgx)<br/>internal/store"]
+    store -->|SQL over TLS| db[("PostgreSQL<br/>items table")]
 ```
 
 The app creates the `items` table when it starts, so there is no migration step. On Light Cloud the database connection is set for you; the app listens on `PORT`.
@@ -34,11 +35,19 @@ You need Go 1.25 or newer and Docker (for the database).
 
 ```bash
 docker run -d --name items-db -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:16
-export DB_HOST=localhost DB_NAME=postgres DB_USER=postgres DB_PASSWORD=postgres DB_SSLMODE=disable
-go run .
+cp .env.example .env   # points at that database, with DB_SSLMODE=disable
+make run               # or: export the variables in .env and run go run .
 ```
 
 The API is now on http://localhost:8080.
+
+## Test
+
+```bash
+make test   # go vet ./... and go test ./...
+```
+
+The handler tests run against an in-memory store, so they need no database.
 
 ## Try it
 
@@ -63,9 +72,25 @@ On Light Cloud, use your app's URL instead of http://localhost:8080.
 | `DB_PASSWORD` | Light Cloud | Database password |
 | `DB_SSLMODE` | you, optional | `require` by default: TLS on, certificate not verified. Set `disable` for a local database without TLS. |
 
+## Project structure
+
+```text
+.
+├── main.go                  # Entry point: config, logger, database, server, graceful shutdown
+├── internal/
+│   ├── config/              # PORT and DB_* settings, builds the database URL
+│   ├── server/              # Routes, handlers, request validation, middleware, tests
+│   └── store/               # Item type, CREATE TABLE and SQL queries (pgx)
+├── .env.example             # Local settings, copy to .env
+├── Makefile                 # make run, make test, make build
+└── go.mod
+```
+
+The handlers depend on the small `Store` interface in `internal/server`, not on PostgreSQL, so you can test them without a database.
+
 ## Make it yours
 
-The code is in `main.go`. Rename `items`, add columns to the `CREATE TABLE` statement and the validation, and push: Light Cloud redeploys on every push.
+Rename `items`, add columns to the `CREATE TABLE` statement and the queries in `internal/store`, update the validation in `internal/server/request.go`, and push: Light Cloud redeploys on every push.
 
 ## License
 

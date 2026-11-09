@@ -1,3 +1,17 @@
+# Build output
+/bin/
 /main
-/starter-crud-api-gin
+/crud-api-gin
+*.exe
+
+# Test and coverage output
+*.test
+*.out
+
+# Local settings
 .env
+go.work
+go.work.sum
+.DS_Store
+.idea/
+.vscode/

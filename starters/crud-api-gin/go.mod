@@ -1,4 +1,4 @@
-module github.com/light-cloud-com/starter-crud-api-gin
+module crud-api-gin
 
 go 1.25.0
 
