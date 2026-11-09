@@ -1,15 +1,12 @@
+"""Entry point: Light Cloud starts the app with `uvicorn main:app`."""
+
 import os
 
 import uvicorn
-from fastapi import FastAPI
 
-app = FastAPI()
+from app.main import app
 
-
-@app.get("/")
-async def index():
-    return {"message": "Hello from FastAPI on Light Cloud"}
-
+__all__ = ["app"]
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))

@@ -18,8 +18,20 @@
 
 - FastAPI 0.115 with automatic OpenAPI docs
 - Uvicorn ASGI server
+- Routes grouped with `APIRouter` in an `app` package
+- Tests with pytest and FastAPI's `TestClient`
 - Binds `0.0.0.0` so the container is reachable
 - Binds `$PORT`, defaulting to 8000
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client (browser, curl, app)"] -->|HTTPS| uvicorn["Uvicorn"]
+    uvicorn --> main["main.py"]
+    main --> app["app/main.py<br/>FastAPI app"]
+    app --> routers["app/routers/*<br/>APIRouter"]
+```
 
 ## API Endpoints
 
@@ -28,17 +40,40 @@
 | GET | `/` | Welcome message |
 | GET | `/docs` | Interactive OpenAPI documentation |
 
+## Project structure
+
+```text
+.
+├── app/
+│   ├── main.py          # creates the FastAPI app and includes the routers
+│   └── routers/
+│       └── root.py      # GET /
+├── tests/
+│   └── test_root.py
+├── main.py              # entry point: uvicorn main:app
+├── requirements.txt     # runtime dependencies (what Light Cloud installs)
+├── requirements-dev.txt # adds pytest, httpx and ruff
+├── pyproject.toml       # pytest and ruff settings
+└── .python-version      # Python 3.12
+```
+
+Add a feature as a new module in `app/routers/` and include its router in `app/main.py`.
+
 ## Local Development
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+python3 -m venv .venv && . .venv/bin/activate
+pip install -r requirements-dev.txt
 
 # Run the server
 python main.py
 
 # Or run with reload
 uvicorn main:app --reload
+
+# Run the tests and the linter
+pytest
+ruff check .
 ```
 
 The API will be available at `http://localhost:8000`
@@ -67,7 +102,7 @@ Light Cloud will auto-detect your settings, but you can verify:
 | Setting | Value |
 |---------|-------|
 | Port | `8000` |
-| Start Command | `python main.py` |
+| Start Command | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
 
 ### 5. Deploy
 
