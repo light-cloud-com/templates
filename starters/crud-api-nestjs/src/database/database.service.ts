@@ -1,13 +1,12 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import pg from 'pg';
+import { config } from '../config.js';
 
 @Injectable()
-export class DbService implements OnModuleInit, OnModuleDestroy {
-  // Light Cloud sets DATABASE_URL with sslmode=require&uselibpqcompat=true:
-  // TLS on, certificate not verified (the database's certificate is platform-internal).
+export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   // connectionTimeoutMillis: without it a request waits forever when the database is unreachable.
   readonly pool = new pg.Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: config.databaseUrl,
     max: 5,
     connectionTimeoutMillis: 5000,
   });
