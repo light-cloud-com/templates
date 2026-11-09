@@ -1,0 +1,10 @@
+from flask import Flask
+
+from app.routes import bp
+
+
+def create_app() -> Flask:
+    """Application factory: builds the Flask app and registers its blueprints."""
+    app = Flask(__name__)
+    app.register_blueprint(bp)
+    return app

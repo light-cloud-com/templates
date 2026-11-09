@@ -5,7 +5,7 @@
 <h1 align="center">Flask API Boilerplate</h1>
 
 <p align="center">
-  A Flask service served by Waitress, ready to deploy on Light Cloud.
+  A Flask service served by Gunicorn, ready to deploy on Light Cloud.
 </p>
 
 <p align="center">
@@ -16,10 +16,21 @@
 
 ## Features
 
-- Flask 3
-- Served by Waitress rather than `app.run()` — the development server prints a warning and is single-threaded, and this image is the one that goes live
+- Flask 3 with an application factory (`create_app`) and blueprints
+- Served by Gunicorn on Light Cloud (`gunicorn main:app`), and by Waitress when you run `python main.py` locally, rather than Flask's single-threaded development server
+- Tests with pytest and Flask's test client
 - Binds `0.0.0.0` so the container is reachable
 - Binds `$PORT`, defaulting to 8000
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client (browser, curl, app)"] -->|HTTPS| server["WSGI server"]
+    server --> main["main.py<br/>app = create_app()"]
+    main --> factory["app/__init__.py<br/>create_app"]
+    factory --> routes["app/routes.py<br/>Blueprint"]
+```
 
 ## API Endpoints
 
@@ -27,14 +38,37 @@
 |--------|----------|-------------|
 | GET | `/` | Welcome message |
 
+## Project structure
+
+```text
+.
+├── app/
+│   ├── __init__.py      # create_app(): builds the app, registers blueprints
+│   └── routes.py        # GET /
+├── tests/
+│   ├── conftest.py      # test client fixture
+│   └── test_routes.py
+├── main.py              # entry point: app = create_app()
+├── requirements.txt     # runtime dependencies (what Light Cloud installs)
+├── requirements-dev.txt # adds pytest and ruff
+├── pyproject.toml       # pytest and ruff settings
+└── .python-version      # Python 3.12
+```
+
+Add a feature as a new blueprint module in `app/` and register it in `create_app`.
+
 ## Local Development
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+python3 -m venv .venv && . .venv/bin/activate
+pip install -r requirements-dev.txt
 
 # Run the server
 python main.py
+
+# Run the tests and the linter
+pytest
+ruff check .
 ```
 
 The API will be available at `http://localhost:8000`

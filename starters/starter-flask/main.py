@@ -1,15 +1,12 @@
+"""Entry point: the WSGI app object lives here as `main:app`."""
+
 import os
 
-from flask import Flask, jsonify
 from waitress import serve
 
-app = Flask(__name__)
+from app import create_app
 
-
-@app.get("/")
-def index():
-    return jsonify(message="Hello from Flask on Light Cloud")
-
+app = create_app()
 
 if __name__ == "__main__":
     # Served by waitress rather than app.run(): the development server prints a
