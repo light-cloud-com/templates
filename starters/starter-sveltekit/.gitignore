@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 
 build
 .svelte-kit
+
+# Test output
+coverage

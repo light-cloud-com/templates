@@ -16,23 +16,61 @@
 
 ## Features
 
-- SvelteKit 2 with Svelte 5, scaffolded with `sv create`
-- `adapter-node`, not `adapter-auto` — Light Cloud runs this as a container
-- File-based routing with server-side rendering
-- Builds a Node server to `build`
+- SvelteKit 2 with Svelte 5 (runes), TypeScript
+- `adapter-node`, not `adapter-auto`: Light Cloud runs this as a container
+- Root layout with a shared header component in `$lib`
+- Home (with a server `load`), About and an API route at `/api/health`
+- ESLint (`eslint-plugin-svelte` flat config), Vitest and `svelte-check`
+- Builds a Node server to `build/`
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    browser["Browser"] -->|HTTPS| server["Light Cloud container<br/>node build on PORT"]
+    server --> pages["src/routes pages<br/>rendered on the server, hydrated in the browser"]
+    server --> api["src/routes/api/health/+server.ts<br/>JSON"]
+```
+
+## Project structure
+
+```text
+.
+├── src/
+│   ├── app.html                    # HTML shell
+│   ├── app.css                     # Global styles
+│   ├── lib/
+│   │   ├── index.ts                # $lib exports
+│   │   └── components/SiteHeader.svelte
+│   └── routes/
+│       ├── +layout.svelte          # Header, main, footer
+│       ├── +page.svelte            # / (data from +page.server.ts)
+│       ├── +page.server.ts
+│       ├── about/+page.svelte      # /about
+│       └── api/health/
+│           ├── +server.ts          # GET /api/health -> {"status":"ok"}
+│           └── server.spec.ts      # Vitest test
+├── static/                         # Files served from /
+├── .env.example
+├── eslint.config.js
+└── vite.config.ts                  # SvelteKit, adapter-node and Vitest config
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build and run for production
-npm run build && npm start
+npm install       # install dependencies
+npm run dev       # dev server on http://localhost:5173
+npm run lint      # ESLint
+npm run check     # svelte-check type checking
+npm test          # Vitest
+npm run build     # production build into build/
+npm start         # run the production server (honours PORT)
 ```
+
+## Environment variables
+
+Copy `.env.example` to `.env`. `PUBLIC_*` variables are readable in browser code through `$env/dynamic/public`; anything else is server-only (`$env/dynamic/private`). Dynamic env is read when the server starts, so changing a value on Light Cloud does not need a code change.
 
 ## Deploy to Light Cloud
 
@@ -68,11 +106,15 @@ Your app will be available at `https://your-app.light-cloud.io`
 
 ## Learn More
 
-This starter is the output of `npx sv create`, with only the changes noted above.
+This starter began as `npx sv create` output and adds the structure described above.
 
 - [SvelteKit documentation](https://svelte.dev/docs/kit)
 - [`sv` CLI](https://github.com/sveltejs/cli)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 
