@@ -23,3 +23,9 @@ export function useCan(permission: Permission) {
   const { data } = useWorkspace();
   return can(data?.role, permission);
 }
+
+/** Setup hints (env var names, server log) are for platform admins, or anyone in development. */
+export function useShowSetupHints() {
+  const isAdmin = useSession().data?.user.role === "admin";
+  return isAdmin || import.meta.env.DEV;
+}

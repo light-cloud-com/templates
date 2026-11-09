@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { App } from "./app";
+import "@fontsource-variable/inter";
 import "./index.css";
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } } });
@@ -13,7 +14,8 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <App />
-        <Toaster position="top-center" />
+        {/* Bottom right; sonner spans the bottom edge on phones. */}
+        <Toaster position="bottom-right" />
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,

@@ -1,25 +1,33 @@
 import { z } from "zod";
 
-const projectName = z.string().trim().min(1, "Name is required").max(100, "Keep the name under 100 characters");
-const projectDescription = z.string().trim().max(500, "Keep the description under 500 characters");
+// Limits shared by the forms (maxLength) and the server (validation).
+export const LIMITS = { userName: 100, workspaceName: 60, apiKeyName: 60, projectName: 100, projectDescription: 500 } as const;
+
+const text = (label: string, max: number, min = 1) =>
+  z.string().trim()
+    .min(min, min === 1 ? `${label} is required` : `${label} must be at least ${min} characters`)
+    .max(max, `${label} must be ${max} characters or fewer`);
+
+const projectName = text("Name", LIMITS.projectName);
+const projectDescription = z.string().trim().max(LIMITS.projectDescription, `Description must be ${LIMITS.projectDescription} characters or fewer`);
 
 export const projectInput = z.object({ name: projectName, description: projectDescription.default("") });
 export const projectPatch = z.object({ name: projectName, description: projectDescription }).partial();
 export type ProjectInput = z.input<typeof projectInput>;
 export type ProjectPatch = z.input<typeof projectPatch>;
 
-export const workspaceInput = z.object({
-  name: z.string().trim().min(2, "At least 2 characters").max(60),
-});
+export const userName = text("Name", LIMITS.userName);
+export const workspaceName = text("Workspace name", LIMITS.workspaceName, 2);
+export const apiKeyName = text("Key name", LIMITS.apiKeyName);
+
+export const workspaceInput = z.object({ name: workspaceName });
 
 export const inviteInput = z.object({
-  email: z.email("Enter a valid email"),
+  email: z.email("Enter a valid email address"),
   role: z.enum(["admin", "member"]),
 });
 
-export const apiKeyInput = z.object({
-  name: z.string().trim().min(1, "Name is required").max(60),
-});
+export const apiKeyInput = z.object({ name: apiKeyName });
 
 export interface Project {
   id: string;

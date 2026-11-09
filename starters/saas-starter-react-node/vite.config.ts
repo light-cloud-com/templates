@@ -11,8 +11,8 @@ export default defineConfig({
   resolve: {
     alias: { "@": path.resolve(import.meta.dirname, "client/src"), "@shared": path.resolve(import.meta.dirname, "shared") },
   },
-  // One bundle keeps the starter simple; split routes with React.lazy as the app grows.
-  build: { outDir: "../dist/client", emptyOutDir: true, chunkSizeWarningLimit: 1000 },
+  // Pages are split with React.lazy (see client/src/app.tsx), so each route downloads on first visit.
+  build: { outDir: "../dist/client", emptyOutDir: true },
   server: {
     port: Number(process.env.VITE_PORT) || 5173,
     proxy: { "/api": `http://localhost:${process.env.PORT || 8080}` },

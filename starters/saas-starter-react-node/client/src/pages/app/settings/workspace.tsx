@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Field, FormError } from "@/components/field";
+import { Confirm } from "@/components/confirm";
+import { Field, FormError, SubmitButton } from "@/components/field";
+import { ListSkeleton } from "@/components/states";
 import { authClient, unwrap, useActiveOrganization } from "@/lib/auth-client";
 import { useCan, useWorkspace } from "@/lib/queries";
-import { workspaceInput } from "@shared/schemas.ts";
-import { Confirm } from "@/components/confirm";
+import { LIMITS, workspaceInput } from "@shared/schemas.ts";
 import { Section } from "./section";
 
 export function WorkspaceSettings() {
@@ -13,53 +14,55 @@ export function WorkspaceSettings() {
   const role = useWorkspace().data?.role;
   const canEdit = useCan({ organization: ["update"] });
   const canDelete = useCan({ organization: ["delete"] });
-  const [error, setError] = useState<string | null>(null);
-  if (!org) return null;
+  const [errors, setErrors] = useState<{ name?: string; form?: string }>({});
+  const [pending, setPending] = useState(false);
+  if (!org) return <ListSkeleton rows={2} />;
 
   async function rename(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const parsed = workspaceInput.safeParse({ name: new FormData(e.currentTarget).get("name") });
-    if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? "Invalid name");
+    if (!parsed.success) return setErrors({ name: parsed.error.issues[0]?.message });
+    setErrors({});
+    setPending(true);
     try {
       await unwrap(authClient.organization.update({ organizationId: org!.id, data: { name: parsed.data.name } }));
-      setError(null);
       toast.success("Workspace renamed");
     } catch (err) {
-      setError((err as Error).message);
+      setErrors({ name: (err as Error).message });
+    } finally {
+      setPending(false);
     }
   }
 
   async function leaveOrDelete(kind: "leave" | "delete") {
-    try {
-      const organizationId = org!.id;
-      if (kind === "delete") await unwrap(authClient.organization.delete({ organizationId }));
-      else await unwrap(authClient.organization.leave({ organizationId }));
-      window.location.assign("/dashboard");
-    } catch (err) {
-      toast.error((err as Error).message);
-    }
+    const organizationId = org!.id;
+    if (kind === "delete") await unwrap(authClient.organization.delete({ organizationId }));
+    else await unwrap(authClient.organization.leave({ organizationId }));
+    // A full load picks the next workspace (or asks for a new one).
+    window.location.assign("/dashboard");
   }
 
   return (
     <>
-      <Section title="General" description={canEdit ? undefined : "Only owners and admins can change these."}>
-        <form onSubmit={rename} className="grid max-w-sm gap-4">
-          <Field label="Workspace name" id="name" defaultValue={org.name} disabled={!canEdit} required />
-          <FormError message={error} />
-          {canEdit && <Button type="submit" className="justify-self-start">Save</Button>}
+      <Section title="General" description={canEdit ? "The name your team sees in the workspace switcher and in emails." : "Only owners and admins can change these."}>
+        <form onSubmit={rename} noValidate className="grid max-w-md gap-4">
+          <FormError message={errors.form} />
+          <Field label="Workspace name" id="name" defaultValue={org.name} disabled={!canEdit} maxLength={LIMITS.workspaceName} required error={errors.name} />
+          {canEdit && <SubmitButton pending={pending} className="justify-self-start">Save</SubmitButton>}
         </form>
       </Section>
-      <Section title="Danger zone" danger
-        description={canDelete ? "Deleting the workspace removes its projects, members, invitations and API keys." : "Leave this workspace. You will need a new invitation to come back."}>
-        {canDelete ? (
-          <Confirm trigger={<Button variant="destructive">Delete workspace</Button>} title={`Delete ${org.name}?`}
+      {canDelete ? (
+        <Section title="Delete workspace" danger description="Removes its projects, members, invitations and API keys for everyone.">
+          <Confirm trigger={<Button variant="destructive-outline">Delete workspace</Button>} title={`Delete ${org.name}?`}
             description="Everything in this workspace is removed for everyone. Cancel any paid subscription first. This cannot be undone."
-            action="Delete workspace" onConfirm={() => leaveOrDelete("delete")} />
-        ) : role && (
-          <Confirm trigger={<Button variant="destructive">Leave workspace</Button>} title={`Leave ${org.name}?`}
-            description="You will lose access to its projects." action="Leave" onConfirm={() => leaveOrDelete("leave")} />
-        )}
-      </Section>
+            confirmText={org.name} action="Delete workspace" onConfirm={() => leaveOrDelete("delete")} />
+        </Section>
+      ) : role && (
+        <Section title="Leave workspace" danger description="You lose access to its projects and need a new invitation to come back.">
+          <Confirm trigger={<Button variant="destructive-outline">Leave workspace</Button>} title={`Leave ${org.name}?`}
+            description="You will lose access to its projects. Someone has to invite you again to come back." action="Leave workspace" onConfirm={() => leaveOrDelete("leave")} />
+        </Section>
+      )}
     </>
   );
 }

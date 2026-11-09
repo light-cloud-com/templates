@@ -1,15 +1,18 @@
 import type { ReactNode } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-export function Section({ title, description, children, danger }: { title: string; description?: ReactNode; children: ReactNode; danger?: boolean }) {
+/** A titled block of settings: flat card, heading row, content. */
+export function Section({ title, description, children, danger, action }: { title: string; description?: ReactNode; children?: ReactNode; danger?: boolean; action?: ReactNode }) {
   return (
-    <Card className={cn(danger && "border-destructive/40")}>
-      <CardHeader>
-        <CardTitle><h2>{title}</h2></CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
+    <section className={cn("bg-card rounded-xl border", danger && "border-destructive/40")}>
+      <div className={cn("flex flex-wrap items-start justify-between gap-3 p-4 sm:p-6", children && "pb-0 sm:pb-0")}>
+        <div className="min-w-0">
+          <h2 className={cn("text-base font-semibold", danger && "text-destructive")}>{title}</h2>
+          {description && <p className="text-muted-foreground mt-1 text-sm">{description}</p>}
+        </div>
+        {action}
+      </div>
+      {children && <div className="px-4 pt-4 pb-4 sm:px-6 sm:pt-5 sm:pb-6">{children}</div>}
+    </section>
   );
 }

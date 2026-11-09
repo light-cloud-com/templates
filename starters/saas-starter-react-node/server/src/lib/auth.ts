@@ -1,13 +1,15 @@
 import { betterAuth } from "better-auth";
-import { APIError } from "better-auth/api";
+import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, organization } from "better-auth/plugins";
 import { apiKey } from "@better-auth/api-key";
-import { and, count, eq, ne } from "drizzle-orm";
+import { and, count, eq, gt, ne, sql } from "drizzle-orm";
+import type { ZodType } from "zod";
 import { config } from "../config.ts";
 import { db } from "../db/index.ts";
 import * as schema from "../db/schema.ts";
 import { ac, roles } from "../../../shared/permissions.ts";
+import { apiKeyName, LIMITS, userName, workspaceName } from "../../../shared/schemas.ts";
 import { emails } from "./email.ts";
 import { baseUrlFrom } from "./url.ts";
 import { getWorkspacePlan, stripePlugin } from "./billing.ts";
@@ -16,6 +18,54 @@ import { getWorkspacePlan, stripePlugin } from "./billing.ts";
 async function deleteWorkspaceData(id: string) {
   await db.delete(schema.apikey).where(eq(schema.apikey.referenceId, id));
   await db.delete(schema.organization).where(eq(schema.organization.id, id));
+}
+
+// Names typed into Better Auth's own endpoints, checked with the same rules as the forms.
+const nameRules: Record<string, [(body: Record<string, unknown>) => unknown, ZodType]> = {
+  "/sign-up/email": [(b) => b.name, userName],
+  "/update-user": [(b) => b.name, userName],
+  "/organization/create": [(b) => b.name, workspaceName],
+  "/organization/update": [(b) => (b.data as Record<string, unknown> | undefined)?.name, workspaceName],
+  "/api-key/create": [(b) => b.name, apiKeyName],
+};
+
+const validateInput = createAuthMiddleware(async (ctx) => {
+  const body = (ctx.body ?? {}) as Record<string, unknown>;
+  const rule = nameRules[ctx.path];
+  if (rule) {
+    const value = rule[0](body);
+    if (value !== undefined) {
+      const parsed = rule[1].safeParse(value);
+      if (!parsed.success) throw new APIError("BAD_REQUEST", { message: parsed.error.issues[0]?.message ?? "Invalid name" });
+    }
+  }
+  // Better Auth answers "ok" for an address that is taken (so it cannot be probed);
+  // a signed-in user changing their own email gets the real reason instead.
+  if (ctx.path === "/change-email" && typeof body.newEmail === "string" && (await getSessionFromCtx(ctx))) {
+    const [taken] = await db.select({ id: schema.user.id }).from(schema.user)
+      .where(eq(sql`lower(${schema.user.email})`, body.newEmail.toLowerCase()));
+    if (taken) throw new APIError("BAD_REQUEST", { message: "That email is already used by another account" });
+  }
+});
+
+/** Members plus pending invitations may not exceed the plan's member limit. */
+async function assertSeatFree(organizationId: string) {
+  const plan = await getWorkspacePlan(organizationId);
+  const limit = plan.limits.members;
+  if (limit === null) return;
+  const [[members], [pending]] = await Promise.all([
+    db.select({ n: count() }).from(schema.member).where(eq(schema.member.organizationId, organizationId)),
+    db.select({ n: count() }).from(schema.invitation).where(and(
+      eq(schema.invitation.organizationId, organizationId),
+      eq(schema.invitation.status, "pending"),
+      gt(schema.invitation.expiresAt, new Date()),
+    )),
+  ]);
+  if (members!.n + pending!.n >= limit) {
+    throw new APIError("FORBIDDEN", {
+      message: `The ${plan.name} plan allows ${limit} members, counting pending invitations. Cancel an invitation or upgrade to invite more.`,
+    });
+  }
 }
 
 export const auth = betterAuth({
@@ -27,6 +77,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema }),
   advanced: { trustedProxyHeaders: true },
   rateLimit: { storage: "database" },
+  hooks: { before: validateInput },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
@@ -99,9 +150,12 @@ export const auth = betterAuth({
       ac,
       roles,
       invitationExpiresIn: 60 * 60 * 24 * 7,
-      cancelPendingInvitationsOnReInvite: true,
       membershipLimit: async (_user, org) => (await getWorkspacePlan(org.id)).limits.members ?? Number.MAX_SAFE_INTEGER,
       organizationHooks: {
+        // A repeat invite to the same address is a resend (the app sends resend: true) and skips this.
+        beforeCreateInvitation: async ({ organization: org }) => {
+          await assertSeatFree(org.id);
+        },
         afterDeleteOrganization: async ({ organization: org }) => {
           await db.delete(schema.apikey).where(eq(schema.apikey.referenceId, org.id));
         },
@@ -114,6 +168,7 @@ export const auth = betterAuth({
     apiKey({
       references: "organization",
       defaultPrefix: "sk_",
+      maximumNameLength: LIMITS.apiKeyName,
       rateLimit: { enabled: true, timeWindow: 60_000, maxRequests: 120 },
     }),
     ...(stripePlugin ? [stripePlugin] : []),

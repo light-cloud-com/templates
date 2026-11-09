@@ -19,8 +19,14 @@ describe("workspace roles", () => {
     }
   });
 
-  it("lets members use projects but nothing administrative", () => {
-    expect(can("member", { project: ["create", "read", "update", "delete"] })).toBe(true);
+  it("lets everyone create and edit projects, and only owners and admins delete them", () => {
+    for (const role of ["owner", "admin", "member"]) expect(can(role, { project: ["create", "read", "update"] })).toBe(true);
+    expect(can("owner", { project: ["delete"] })).toBe(true);
+    expect(can("admin", { project: ["delete"] })).toBe(true);
+    expect(can("member", { project: ["delete"] })).toBe(false);
+  });
+
+  it("lets members use the app but nothing administrative", () => {
     expect(can("member", { member: ["delete"] })).toBe(false);
     expect(can("member", { invitation: ["create"] })).toBe(false);
     expect(can("member", { organization: ["update"] })).toBe(false);

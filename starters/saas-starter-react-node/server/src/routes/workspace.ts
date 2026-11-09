@@ -44,6 +44,6 @@ workspaceRoutes.get("/invitations/:id", async (req, res) => {
     .innerJoin(organization, eq(organization.id, invitation.organizationId))
     .innerJoin(user, eq(user.id, invitation.inviterId))
     .where(and(eq(invitation.id, req.params.id), gt(invitation.expiresAt, new Date())));
-  if (!row) throw new HttpError(404, "This invitation does not exist or has expired");
+  if (!row) throw new HttpError(404, "This invitation does not exist or has expired.");
   res.json(row);
 });

@@ -6,7 +6,7 @@ export function ThemeToggle() {
   const theme = useTheme();
   const next = theme === "dark" ? "light" : "dark";
   return (
-    <Button variant="ghost" size="icon" onClick={() => setTheme(next)} aria-label={`Switch to ${next} theme`}>
+    <Button variant="ghost" size="icon" onClick={() => setTheme(next)} aria-label={`Switch to ${next} theme`} className="text-muted-foreground hover:text-foreground">
       {theme === "dark" ? <Sun /> : <Moon />}
     </Button>
   );

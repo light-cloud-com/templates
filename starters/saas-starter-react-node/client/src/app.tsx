@@ -1,36 +1,42 @@
-import { Navigate, Outlet, Route, Routes } from "react-router";
-import { AppShell, RequireAuth } from "@/components/app-shell";
-import { SiteFooter, SiteHeader } from "@/components/site-header";
+import { lazy, Suspense, type ComponentType } from "react";
+import { Navigate, Route, Routes } from "react-router";
+import { AppShell, RequireAuth, ShellSkeleton } from "@/components/app-shell";
+import { AuthLayout, FocusLayout, MarketingLayout } from "@/components/layouts";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Landing } from "@/pages/marketing/landing";
-import { Pricing } from "@/pages/marketing/pricing";
-import { Privacy, Terms } from "@/pages/marketing/legal";
-import { NotFound } from "@/pages/marketing/not-found";
-import { SignIn } from "@/pages/auth/sign-in";
-import { SignUp } from "@/pages/auth/sign-up";
-import { ForgotPassword, ResetPassword } from "@/pages/auth/password";
-import { AcceptInvite } from "@/pages/auth/invite";
-import { Onboarding } from "@/pages/app/onboarding";
-import { Dashboard } from "@/pages/app/dashboard";
-import { Projects } from "@/pages/app/projects";
-import { ProjectDetail } from "@/pages/app/project-detail";
-import { NewWorkspace } from "@/pages/app/new-workspace";
-import { Admin } from "@/pages/app/admin";
-import { SettingsLayout } from "@/pages/app/settings/layout";
-import { AccountSettings } from "@/pages/app/settings/account";
-import { WorkspaceSettings } from "@/pages/app/settings/workspace";
-import { MembersSettings } from "@/pages/app/settings/members";
-import { ApiKeysSettings } from "@/pages/app/settings/api-keys";
-import { BillingSettings } from "@/pages/app/settings/billing";
 
-function MarketingLayout() {
-  return (
-    <div className="flex min-h-svh flex-col">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:p-2">Skip to content</a>
-      <SiteHeader />
-      <main id="main" className="flex-1"><Outlet /></main>
-      <SiteFooter />
-    </div>
-  );
+// Each page is its own download, fetched the first time it is opened. The landing
+// page ships with the first bundle because most visitors arrive there.
+function page<K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) {
+  return lazy(() => load().then((m) => ({ default: m[name] })));
+}
+
+const Pricing = page(() => import("@/pages/marketing/pricing"), "Pricing");
+const Terms = page(() => import("@/pages/marketing/legal"), "Terms");
+const Privacy = page(() => import("@/pages/marketing/legal"), "Privacy");
+const NotFound = page(() => import("@/pages/marketing/not-found"), "NotFound");
+const SignIn = page(() => import("@/pages/auth/sign-in"), "SignIn");
+const SignUp = page(() => import("@/pages/auth/sign-up"), "SignUp");
+const ForgotPassword = page(() => import("@/pages/auth/password"), "ForgotPassword");
+const ResetPassword = page(() => import("@/pages/auth/password"), "ResetPassword");
+const AcceptInvite = page(() => import("@/pages/auth/invite"), "AcceptInvite");
+const Onboarding = page(() => import("@/pages/app/onboarding"), "Onboarding");
+const NewWorkspace = page(() => import("@/pages/app/new-workspace"), "NewWorkspace");
+const Dashboard = page(() => import("@/pages/app/dashboard"), "Dashboard");
+const Projects = page(() => import("@/pages/app/projects"), "Projects");
+const ProjectDetail = page(() => import("@/pages/app/project-detail"), "ProjectDetail");
+const Admin = page(() => import("@/pages/app/admin"), "Admin");
+const SettingsLayout = page(() => import("@/pages/app/settings/layout"), "SettingsLayout");
+const AccountSettings = page(() => import("@/pages/app/settings/account"), "AccountSettings");
+const WorkspaceSettings = page(() => import("@/pages/app/settings/workspace"), "WorkspaceSettings");
+const MembersSettings = page(() => import("@/pages/app/settings/members"), "MembersSettings");
+const ApiKeysSettings = page(() => import("@/pages/app/settings/api-keys"), "ApiKeysSettings");
+const BillingSettings = page(() => import("@/pages/app/settings/billing"), "BillingSettings");
+
+/** Onboarding and new workspace: their own full-screen layout, guarded like the app. */
+function Focused({ children }: { children: React.ReactNode }) {
+  const loading = <FocusLayout><Skeleton className="h-80" /></FocusLayout>;
+  return <RequireAuth fallback={loading}><Suspense fallback={loading}>{children}</Suspense></RequireAuth>;
 }
 
 export function App() {
@@ -41,16 +47,18 @@ export function App() {
         <Route path="pricing" element={<Pricing />} />
         <Route path="terms" element={<Terms />} />
         <Route path="privacy" element={<Privacy />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+      <Route element={<AuthLayout />}>
         <Route path="sign-in" element={<SignIn />} />
         <Route path="sign-up" element={<SignUp />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="reset-password" element={<ResetPassword />} />
         <Route path="invite/:id" element={<AcceptInvite />} />
-        <Route path="*" element={<NotFound />} />
       </Route>
-      <Route path="onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
-      <Route path="workspaces/new" element={<RequireAuth><NewWorkspace /></RequireAuth>} />
-      <Route element={<RequireAuth><AppShell /></RequireAuth>}>
+      <Route path="onboarding" element={<Focused><Onboarding /></Focused>} />
+      <Route path="workspaces/new" element={<Focused><NewWorkspace /></Focused>} />
+      <Route element={<RequireAuth fallback={<ShellSkeleton />}><AppShell /></RequireAuth>}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="projects" element={<Projects />} />
         <Route path="projects/:id" element={<ProjectDetail />} />

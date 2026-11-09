@@ -18,7 +18,8 @@ const allKeys = ["create", "read", "update", "delete"] as const;
 export const roles = {
   owner: ac.newRole({ ...ownerAc.statements, project: allProjects, apiKey: allKeys, billing: ["manage"] }),
   admin: ac.newRole({ ...adminAc.statements, project: allProjects, apiKey: allKeys }),
-  member: ac.newRole({ ...memberAc.statements, project: allProjects }),
+  // Members create and edit projects; deleting one is for owners and admins.
+  member: ac.newRole({ ...memberAc.statements, project: ["create", "read", "update"] }),
 };
 
 export type Role = keyof typeof roles;

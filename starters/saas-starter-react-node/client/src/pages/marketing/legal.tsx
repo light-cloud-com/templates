@@ -1,7 +1,10 @@
+import { useTitle } from "@/lib/title";
+
 // Placeholders. Replace them with your own terms and privacy policy before launch.
 function Legal({ title, children }: { title: string; children: React.ReactNode }) {
+  useTitle(title);
   return (
-    <article className="mx-auto max-w-3xl px-4 py-16">
+    <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
       <p className="text-muted-foreground mt-2 text-sm">Last updated: replace this date.</p>
       <div className="mt-8 grid gap-4 leading-7">{children}</div>

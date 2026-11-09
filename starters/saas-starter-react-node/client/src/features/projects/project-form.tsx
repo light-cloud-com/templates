@@ -1,43 +1,40 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Field, FormError } from "@/components/field";
-import { projectInput, type Project, type ProjectInput } from "@shared/schemas.ts";
+import { Field, FormError, SubmitButton, TextareaField } from "@/components/field";
+import { fieldErrors, type FieldErrors } from "@/lib/forms";
+import { LIMITS, projectInput, type Project, type ProjectInput } from "@shared/schemas.ts";
 
-export function ProjectForm({ project, onSubmit, submitLabel }: {
+export function ProjectForm({ project, onSubmit, submitLabel, disabled }: {
   project?: Project;
   onSubmit: (input: ProjectInput) => Promise<unknown>;
   submitLabel: string;
+  disabled?: boolean;
 }) {
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [pending, setPending] = useState(false);
 
   async function handle(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const parsed = projectInput.safeParse({ name: form.get("name"), description: form.get("description") });
-    if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? "Invalid input");
+    if (!parsed.success) return setErrors(fieldErrors(parsed.error));
     setPending(true);
-    setError(null);
+    setErrors({});
     try {
       await onSubmit(parsed.data);
     } catch (err) {
-      setError((err as Error).message);
+      setErrors({ form: (err as Error).message });
     } finally {
       setPending(false);
     }
   }
 
   return (
-    <form onSubmit={handle} className="grid gap-4">
-      <Field label="Name" id="name" defaultValue={project?.name} maxLength={100} required />
-      <div className="grid gap-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" defaultValue={project?.description} maxLength={500} rows={3} />
-      </div>
-      <FormError message={error} />
-      <Button type="submit" disabled={pending} className="justify-self-start">{pending ? "Saving…" : submitLabel}</Button>
+    <form onSubmit={handle} noValidate className="grid gap-4">
+      <FormError message={errors.form} />
+      <Field label="Name" id="name" defaultValue={project?.name} maxLength={LIMITS.projectName} required disabled={disabled} error={errors.name} placeholder="Website relaunch" />
+      <TextareaField label="Description" id="description" defaultValue={project?.description} maxLength={LIMITS.projectDescription} rows={3} disabled={disabled} error={errors.description}
+        hint="Optional." />
+      {!disabled && <SubmitButton pending={pending} className="justify-self-start">{submitLabel}</SubmitButton>}
     </form>
   );
 }
