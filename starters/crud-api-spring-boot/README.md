@@ -2,7 +2,7 @@
 
 A small REST API for one resource, `items`, built with Spring Boot 4 and Spring JDBC. Deploy it with a PostgreSQL database in one click, then make it yours.
 
-[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://console.light-cloud.com/new?repo=https://github.com/light-cloud-com/starter-crud-api-spring-boot)
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://console.light-cloud.com/new?template=crud-api-spring-boot)
 
 ## How it works
 
