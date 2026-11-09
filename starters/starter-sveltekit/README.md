@@ -1,129 +1,169 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# SvelteKit Starter (Node Adapter)
 
-<h1 align="center">SvelteKit Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![SvelteKit 2](https://img.shields.io/badge/SvelteKit-2-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev/docs/kit) [![Svelte 5](https://img.shields.io/badge/Svelte-5-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev) [![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![Tests: Vitest](https://img.shields.io/badge/tests-Vitest-6E9F18?logo=vitest&logoColor=white)](src/routes/api/health) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/sveltekit-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/sveltekit-starter)
 
-<p align="center">
-  A SvelteKit app on the Node adapter, ready to deploy on Light Cloud.
-</p>
+A SvelteKit 2 starter with Svelte 5 runes and TypeScript, built with `@sveltejs/adapter-node` into a Node.js server that renders every page on the server. It is a small boilerplate for developers who want a working server-rendered SvelteKit app with a shared layout, a server `load` function, a JSON API endpoint, ESLint, `svelte-check` and Vitest, on Vite 8. It runs on any host that runs Node.js, and deploys to Light Cloud in one click.
 
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-sveltekit"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
+## Screenshot
 
----
+<img alt="SvelteKit Starter: home page with a welcome heading and the time from the server load function" src="docs/screenshots/home-light.png" width="100%">
+<img alt="SvelteKit Starter: about page explaining where routes, components and API endpoints live" src="docs/screenshots/about-light.png" width="100%">
 
 ## Features
 
-- SvelteKit 2 with Svelte 5 (runes), TypeScript
-- `adapter-node`, not `adapter-auto`: Light Cloud runs this as a container
-- Root layout with a shared header component in `$lib`
-- Home (with a server `load`), About and an API route at `/api/health`
-- ESLint (`eslint-plugin-svelte` flat config), Vitest and `svelte-check`
-- Builds a Node server to `build/`
+- SvelteKit 2.70 with Svelte 5.56 in runes mode, on Vite 8
+- `adapter-node` instead of `adapter-auto`, so the build is a plain Node.js server in `build/`
+- Root layout with a shared `SiteHeader` component in `src/lib`, imported through `$lib`
+- Home page with a server `load` in `+page.server.ts`, an About page, and SvelteKit's default error page
+- A `+server.ts` endpoint at `GET /api/health` that answers `{ "status": "ok" }`
+- `PUBLIC_SITE_NAME` read at runtime through `$env/dynamic/public`
+- ESLint 9 flat config with `typescript-eslint` and `eslint-plugin-svelte`
+- Type checking with `svelte-check` and a Vitest test for the endpoint
+- SvelteKit and Vitest configured in one file, `vite.config.ts`
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    browser["Browser"] -->|HTTPS| server["Light Cloud container<br/>node build on PORT"]
-    server --> pages["src/routes pages<br/>rendered on the server, hydrated in the browser"]
-    server --> api["src/routes/api/health/+server.ts<br/>JSON"]
+You need Node.js 20.19 or later (or 22.12 or later) and npm. `.npmrc` sets `engine-strict=true`, so `npm install` stops on an older Node.js.
+
+```bash
+git clone https://github.com/light-cloud-templates/sveltekit-starter.git
+cd sveltekit-starter
+npm install
+cp .env.example .env
+npm run dev
 ```
+
+Open <http://localhost:5173>. Edit `src/routes/+page.svelte` and the page updates.
+
+Other ways to start:
+
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/sveltekit-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/sveltekit-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/sveltekit-starter)
+
+The Deploy button copies this template into your GitHub account and creates a server app: Light Cloud runs `npm run build`, then `npm start` (`node build`) in a container that listens on the port in `PORT`.
+
+There are no secrets to fill in. Every push to the default branch deploys again. The Free plan includes up to 3 server apps.
+
+### Deploy anywhere else
+
+This is a standard SvelteKit app with no Light Cloud code in it. Any host that runs Node.js 20.19 or later runs it: `npm ci`, `npm run build`, then `node build`. The server reads `PORT` (default `3000`) and `HOST` (default `0.0.0.0`). To target a platform with its own adapter, swap `adapter-node` for that adapter in `vite.config.ts`.
 
 ## Project structure
 
 ```text
 .
 ├── src/
-│   ├── app.html                    # HTML shell
-│   ├── app.css                     # Global styles
+│   ├── app.html                     # HTML shell
+│   ├── app.css                      # global styles
+│   ├── app.d.ts                     # App namespace types
 │   ├── lib/
-│   │   ├── index.ts                # $lib exports
+│   │   ├── index.ts                 # $lib exports
+│   │   ├── assets/favicon.svg
 │   │   └── components/SiteHeader.svelte
 │   └── routes/
-│       ├── +layout.svelte          # Header, main, footer
-│       ├── +page.svelte            # / (data from +page.server.ts)
-│       ├── +page.server.ts
-│       ├── about/+page.svelte      # /about
+│       ├── +layout.svelte           # header, main, footer
+│       ├── +page.svelte             # /
+│       ├── +page.server.ts          # server load for /
+│       ├── about/+page.svelte       # /about
 │       └── api/health/
-│           ├── +server.ts          # GET /api/health -> {"status":"ok"}
-│           └── server.spec.ts      # Vitest test
-├── static/                         # Files served from /
-├── .env.example
-├── eslint.config.js
-└── vite.config.ts                  # SvelteKit, adapter-node and Vitest config
+│           ├── +server.ts           # GET /api/health
+│           └── server.spec.ts       # Vitest test
+├── static/                          # files served from / (robots.txt)
+├── .env.example                     # the variables, for local runs
+├── .npmrc                           # engine-strict=true
+├── eslint.config.js                 # ESLint flat config
+├── tsconfig.json
+└── vite.config.ts                   # SvelteKit, adapter-node and Vitest config
 ```
 
-## Local development
+## Pages
+
+| Path | File | What it shows |
+| --- | --- | --- |
+| `/` | `src/routes/+page.svelte` | Welcome page with the render time from `+page.server.ts` |
+| `/about` | `src/routes/about/+page.svelte` | Where routes, components and API endpoints live |
+
+## API endpoints
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/health` | Answers `200` with `{ "status": "ok" }` |
 
 ```bash
-npm install       # install dependencies
-npm run dev       # dev server on http://localhost:5173
-npm run lint      # ESLint
-npm run check     # svelte-check type checking
-npm test          # Vitest
-npm run build     # production build into build/
-npm start         # run the production server (honours PORT)
+curl http://localhost:5173/api/health
 ```
+
+After `npm run build && npm start` the server is on port `3000`; on Light Cloud, use your app's URL.
 
 ## Environment variables
 
-Copy `.env.example` to `.env`. `PUBLIC_*` variables are readable in browser code through `$env/dynamic/public`; anything else is server-only (`$env/dynamic/private`). Dynamic env is read when the server starts, so changing a value on Light Cloud does not need a code change.
+| Name | Required | Default | What it does |
+| --- | --- | --- | --- |
+| `PORT` | No | `3000` | Port the production server listens on. Set by Light Cloud. |
+| `PUBLIC_SITE_NAME` | No | `SvelteKit App` | Site name in the header, read when the server starts. |
 
-## Deploy to Light Cloud
+`PUBLIC_*` variables can be imported in browser code through `$env/dynamic/public`, so never put secrets in them. Other variables are server-only, through `$env/dynamic/private`.
 
-### 1. Create an Account
+## Testing
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+```bash
+npm test          # Vitest
+npm run lint      # ESLint
+npm run check     # svelte-check type checking
+```
 
-### 2. Create New Application
+## How it works
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Container"** as the deployment type
-3. Choose **"SvelteKit"** as the framework
+```mermaid
+flowchart LR
+    browser["Browser"] -->|HTTPS| server["Node server<br/>node build, listens on PORT"]
+    server --> load["+page.server.ts<br/>load"]
+    load --> page["+page.svelte<br/>rendered to HTML"]
+    server --> api["api/health/+server.ts<br/>JSON"]
+    page -->|hydrate| svelte["Svelte in the browser"]
+```
 
-### 3. Connect Repository
+For each request to `/`, the server runs the `load` function, renders `+page.svelte` with its data, and sends HTML that Svelte then hydrates in the browser. `+server.ts` files answer HTTP requests directly.
 
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
+## FAQ
 
-### 4. Configure Settings
+### Why adapter-node instead of adapter-auto?
 
-Light Cloud will auto-detect your settings, but you can verify:
+`adapter-auto` only recognises a fixed list of hosting platforms. `adapter-node` builds a standard Node.js server that runs in any container, on Light Cloud or anywhere else.
 
-| Setting | Value |
-|---------|-------|
-| Port | `3000` |
-| Start Command | `npm start` |
+### How do I add a page in SvelteKit?
 
-### 5. Deploy
+Create a folder in `src/routes/` with a `+page.svelte` in it: `src/routes/contact/+page.svelte` becomes `/contact`. Add a `+page.server.ts` next to it if the page needs data loaded on the server, and add the link to `SiteHeader.svelte`.
 
-Click **"Deploy"** and your app will be live in minutes!
+### How do I add an API endpoint in SvelteKit?
 
-Your app will be available at `https://your-app.light-cloud.io`
+Create a `+server.ts` file and export a function per HTTP method, as in `src/routes/api/health/+server.ts`. `src/routes/api/hello/+server.ts` with `export const GET` answers `GET /api/hello`.
 
-## Learn More
+### How do I use environment variables in SvelteKit?
 
-This starter began as `npx sv create` output and adds the structure described above.
+Import from `$env/dynamic/private` in server code and from `$env/dynamic/public` for `PUBLIC_` variables in browser code. Dynamic variables are read when the server starts, so changing one on Light Cloud needs no code change.
 
-- [SvelteKit documentation](https://svelte.dev/docs/kit)
-- [`sv` CLI](https://github.com/sveltejs/cli)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+### Can I deploy it without Light Cloud?
 
-## License
+Yes. It is a plain SvelteKit app: any host with Node.js 20.19 or later runs it with `npm run build` and `node build`.
 
-[MIT](./LICENSE)
+## Related templates
+
+- [svelte-vite-starter](https://github.com/light-cloud-templates/svelte-vite-starter): a Svelte single-page app served as static files
+- [nextjs-app-router-starter](https://github.com/light-cloud-templates/nextjs-app-router-starter): the same pages in Next.js
+- [nuxt-ssr-starter](https://github.com/light-cloud-templates/nuxt-ssr-starter): the same pages in Nuxt and Vue
+- [remix-vite-starter](https://github.com/light-cloud-templates/remix-vite-starter): the same pages in Remix v2
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
