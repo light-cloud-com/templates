@@ -1,123 +1,153 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# Go REST API Starter (net/http)
 
-<h1 align="center">Go API Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![Go 1.25](https://img.shields.io/badge/Go-1.25-00ADD8?logo=go&logoColor=white)](https://go.dev) [![net/http](https://img.shields.io/badge/router-net%2Fhttp-00ADD8?logo=go&logoColor=white)](https://pkg.go.dev/net/http) [![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen)](go.mod) [![Tests: go test](https://img.shields.io/badge/tests-go%20test-00ADD8?logo=go&logoColor=white)](internal/server) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/go-api-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/go-api-starter)
 
-<p align="center">
-  A Go REST API built on the standard library, ready to deploy on Light Cloud.
-</p>
-
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-go"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
-
----
+A Go REST API starter for Go 1.25 built only on the standard library: `net/http` for routing, `encoding/json` for responses and `log/slog` for logs, with no third-party dependencies. It is a small, tested boilerplate for Go developers who want a clean JSON API skeleton with a health check, structured request logs, graceful shutdown and a Dockerfile, ready to add routes to. It compiles to one static binary, and deploys to Light Cloud in one click.
 
 ## Features
 
-- Standard library `net/http`, no framework
-- Health check endpoint with uptime
-- Table-driven handler tests with `net/http/httptest`
-- Structured JSON logs with `log/slog`, one line per request
-- Graceful shutdown on `SIGTERM`
-- Compiles to a single static binary, Dockerfile included
-- Listens on `$PORT`, defaulting to 8080
+- Standard library only: `go.mod` has no `require` lines and no `go.sum`
+- `GET /` answers a JSON welcome message with the API version and its endpoints
+- `GET /health` answers `healthy`, the current time (RFC 3339) and the uptime in seconds
+- Unknown paths answer `404`
+- Structured JSON logs with `log/slog`, one line per request with method, path, status and duration
+- Graceful shutdown on `SIGTERM` or Ctrl+C, with a 10 second drain
+- `ReadHeaderTimeout` of 10 seconds on the server
+- Table-driven route tests with `net/http/httptest`
+- Multi-stage Dockerfile: builds on `golang:1.25-alpine`, runs as `nobody` on Alpine
+- Listens on `PORT`, default `8080`
 
-## How it works
+## Quick start
 
-```mermaid
-flowchart LR
-    client["Client"] -->|HTTP| mw["Middleware<br/>logRequests"]
-    mw --> router["Router<br/>internal/server"]
-    router --> handlers["Handlers<br/>/ and /health"]
-    main["main.go"] -.->|"reads PORT<br/>internal/config"| router
+You need Go 1.25 or newer.
+
+```bash
+git clone https://github.com/light-cloud-templates/go-api-starter.git
+cd go-api-starter
+cp .env.example .env
+make run
 ```
 
-`main.go` only wires things together: it loads the config, builds the router and runs the server until Light Cloud (or Ctrl+C) asks it to stop.
+`make run` loads `.env` when it exists and runs `go run .`. Open <http://localhost:8080/health> to see the health check.
 
-## API Endpoints
+Other ways to start:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Welcome message and API info |
-| GET | `/health` | Health check with uptime |
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/go-api-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/go-api-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/go-api-starter)
+
+The Deploy button copies this template into your GitHub account and creates a server app: Light Cloud builds the image from the `Dockerfile` and runs it as a container that listens on `PORT`. There are no secrets to fill in, and every push to the default branch deploys again. The Free plan includes up to 3 server apps.
+
+### Deploy anywhere else
+
+There is no Light Cloud code in the app. Any container platform runs the Dockerfile:
+
+```bash
+docker build -t go-api-starter .
+docker run -p 8080:8080 go-api-starter
+```
+
+Without Docker, `make build` writes a static binary to `bin/server`; copy it to any Linux, macOS or Windows host you built it for and start it with `PORT` set.
 
 ## Project structure
 
 ```text
 .
-├── main.go                  # Entry point: config, logger, server, graceful shutdown
+├── main.go                  # entry point: config, logger, server, graceful shutdown
 ├── internal/
-│   ├── config/              # Settings from environment variables
-│   └── server/              # Routes, handlers, middleware and their tests
-├── Dockerfile               # Image Light Cloud builds
-├── .env.example             # Local settings, copy to .env
+│   ├── config/config.go     # reads PORT
+│   └── server/
+│       ├── server.go        # ServeMux and routes
+│       ├── handlers.go      # GET / and GET /health, JSON helper
+│       ├── middleware.go    # one slog line per request
+│       └── server_test.go   # table-driven route tests
+├── Dockerfile               # multi-stage build to a small Alpine image
 ├── Makefile                 # make run, make test, make build
-└── go.mod
+├── .env.example             # PORT, for local runs
+├── .mcp.json                # Light Cloud MCP server for AI coding tools
+└── go.mod                   # Go 1.25, no dependencies
 ```
 
 Code under `internal/` can only be imported by this module, which keeps the HTTP layer private to the app.
 
-## Local Development
+## API endpoints
 
-You need Go 1.25 or newer.
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/` | Welcome message, version and the list of endpoints |
+| `GET` | `/health` | `{"status": "healthy", "timestamp", "uptime"}` |
 
 ```bash
-cp .env.example .env   # optional, make run loads it
-make run               # or: go run .
-make test              # go vet ./... and go test ./...
-make build             # static binary in bin/server
+curl http://localhost:8080/health
 ```
 
-The API will be available at `http://localhost:8080`
+On Light Cloud, use your app's URL instead of `http://localhost:8080`.
 
-## Deploy to Light Cloud
+## Environment variables
 
-### 1. Create an Account
+| Name | Required | Default | What it does |
+| --- | --- | --- | --- |
+| `PORT` | No | `8080` | Port to listen on. Set by Light Cloud. |
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+## Testing
 
-### 2. Create New Application
+```bash
+make test
+```
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Container"** as the deployment type
-3. Choose **"Go"** as the runtime
+`make test` runs `go vet ./...` and `go test ./...`. The tests call the handler directly with `httptest`, so no server needs to be running.
 
-### 3. Connect Repository
+## How it works
 
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| mw["logRequests<br/>middleware"]
+    mw --> mux["http.ServeMux<br/>internal/server"]
+    mux --> handlers["Handlers<br/>/ and /health"]
+    main["main.go"] -.->|"reads PORT<br/>internal/config"| mux
+```
 
-### 4. Configure Settings
+`main.go` only wires things together: it loads the config, builds the handler and runs `http.Server` until Light Cloud (or Ctrl+C) sends a stop signal, then lets open requests finish.
 
-Light Cloud will auto-detect your settings, but you can verify:
+## FAQ
 
-| Setting | Value |
-|---------|-------|
-| Port | `8080` |
-| Dockerfile | Auto-detected |
+### How do I add a route with path parameters in net/http?
 
-### 5. Deploy
+Since Go 1.22 the standard `ServeMux` matches methods and wildcards. Register it in `internal/server/server.go`, for example `mux.HandleFunc("GET /items/{id}", h.getItem)`, and read the value with `r.PathValue("id")` in the handler.
 
-Click **"Deploy"** and your API will be live in minutes!
+### Do I need a framework like Gin, Echo or Fiber?
 
-Your API will be available at `https://your-app.light-cloud.io`
+Not for a JSON API of this size. `net/http` handles routing, middleware is a function that wraps an `http.Handler`, and the code keeps no dependencies to update. Pick a framework when you want its binding, validation or middleware ecosystem.
 
-## Learn More
+### How do I add an environment variable?
 
-- [Go documentation](https://go.dev/doc/)
-- [net/http package](https://pkg.go.dev/net/http)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+Add a field to `Config` in `internal/config/config.go` and read it in `Load` with `getenv("NAME", "default")`. Put a local value in `.env` for `make run`, and set it on your app in Light Cloud for the deployed copy.
+
+### Can I deploy it without Light Cloud?
+
+Yes. Build the Dockerfile on any container platform, or run the binary from `make build` on any server with `PORT` set. The app has no Light Cloud code in it.
+
+### How do I add a PostgreSQL database?
+
+This starter has no database. The [gin-postgresql-crud-api](https://github.com/light-cloud-templates/gin-postgresql-crud-api) template shows a Go app wired to PostgreSQL with pgx, reading the `DB_HOST`, `DB_NAME`, `DB_USER` and `DB_PASSWORD` variables that Light Cloud sets when an app has a database.
+
+## Related templates
+
+- [gin-api-starter](https://github.com/light-cloud-templates/gin-api-starter): the same kind of starter on Gin
+- [echo-api-starter](https://github.com/light-cloud-templates/echo-api-starter): the same kind of starter on Echo
+- [fiber-api-starter](https://github.com/light-cloud-templates/fiber-api-starter): the same kind of starter on Fiber
+- [gin-postgresql-crud-api](https://github.com/light-cloud-templates/gin-postgresql-crud-api): a Go CRUD API with PostgreSQL
+- [dockerfile-starter](https://github.com/light-cloud-templates/dockerfile-starter): deploy any app from its Dockerfile
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.
