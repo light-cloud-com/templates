@@ -4,19 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Static HTML App</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta name="description" content="A plain HTML, CSS and JavaScript site deployed on Light Cloud." />
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <script src="assets/js/main.js" defer></script>
   </head>
   <body>
-    <div class="app">
+    <div class="layout">
       <header class="header">
-        <h1>Welcome to Static HTML</h1>
-        <p>Your site is ready to deploy on Light Cloud</p>
+        <a class="brand" href="index.html">Static HTML</a>
+        <nav class="nav" aria-label="Main">
+          <a href="index.html" aria-current="page">Home</a>
+          <a href="about.html">About</a>
+        </nav>
       </header>
 
       <main class="main">
+        <h1>Welcome to Static HTML</h1>
+        <p>Your site is ready to deploy on Light Cloud.</p>
         <div class="card">
-          <button id="counter-btn">Count is <span id="count">0</span></button>
-          <p>Edit <code>index.html</code> to get started</p>
+          <button type="button" class="button" id="counter-btn">Count is <span id="count">0</span></button>
+          <p>Edit <code>index.html</code> to get started.</p>
         </div>
       </main>
 
@@ -24,7 +34,5 @@
         <p>Deployed with Light Cloud</p>
       </footer>
     </div>
-
-    <script src="script.js"></script>
   </body>
 </html>

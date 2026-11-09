@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About | Static HTML App</title>
+    <meta name="description" content="About this static HTML starter." />
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <script src="assets/js/main.js" defer></script>
+  </head>
+  <body>
+    <div class="layout">
+      <header class="header">
+        <a class="brand" href="index.html">Static HTML</a>
+        <nav class="nav" aria-label="Main">
+          <a href="index.html">Home</a>
+          <a href="about.html" aria-current="page">About</a>
+        </nav>
+      </header>
+
+      <main class="main">
+        <h1>About</h1>
+        <p>
+          A plain static site with no build step. Pages are HTML files at the root, styles live in
+          <code>assets/css</code>, scripts in <code>assets/js</code> and images in <code>assets/images</code>.
+        </p>
+        <p>Add a page by copying <code>about.html</code> and linking it from the navigation.</p>
+      </main>
+
+      <footer class="footer">
+        <p>Deployed with Light Cloud</p>
+      </footer>
+    </div>
+  </body>
+</html>

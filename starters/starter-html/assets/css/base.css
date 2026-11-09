@@ -1,0 +1,41 @@
+/* Design tokens, reset and typography shared by every page. */
+:root {
+  --text: #213547;
+  --muted: #666;
+  --border: #eaeaea;
+  --surface: #f9f9f9;
+  --accent: #e34f26;
+  --accent-hover: #c9451f;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text);
+  background-color: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  background: #e0e0e0;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}

@@ -16,22 +16,45 @@
 
 ## Features
 
-- Pure HTML, CSS, and JavaScript
-- No build step required
-- Lightweight and fast
-- Ready for instant deployment
+- Pure HTML, CSS and JavaScript, no build step
+- Two pages (Home, About) sharing one layout and navigation
+- Styles split into base, layout and components; scripts and images under `assets/`
+- Relative links, so the site works from any folder or host
 
-## Local Development
+## How it works
 
-Simply open `index.html` in your browser, or use a local server:
+```mermaid
+flowchart LR
+    repo["Repository root (HTML pages + assets/)"] -->|uploaded as is| lc["Light Cloud CDN"]
+    lc -->|"/ and /about"| browser["Browser"]
+```
+
+Light Cloud serves the repository root without building it. `/about` is served from `about.html`.
+
+## Project structure
+
+```text
+.
+├── index.html             # Home page
+├── about.html             # Second page, same layout
+└── assets/
+    ├── css/
+    │   ├── base.css       # Design tokens, reset, typography
+    │   ├── layout.css     # Header, navigation, footer
+    │   └── components.css # Card and button
+    ├── js/main.js         # Page behaviour (the counter)
+    └── images/            # Favicon and other images
+```
+
+## Local development
+
+Open `index.html` in your browser, or serve the folder:
 
 ```bash
-# Using Python
-python -m http.server 3000
-
-# Using Node.js (npx)
-npx serve .
+python3 -m http.server 8080   # then open http://localhost:8080
 ```
+
+There is nothing to build or test. To add a page, copy `about.html`, change its content and link it from the `<nav>` in each page.
 
 ## Deploy to Light Cloud
 
@@ -69,6 +92,10 @@ Your site will be available at `https://your-app.light-cloud.io`
 
 - [MDN Web Docs](https://developer.mozilla.org)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 
