@@ -1,0 +1,11 @@
+{
+  // Compiles the server (and the shared code it imports) to dist/ for `npm start`.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": ["server/src", "shared"]
+}

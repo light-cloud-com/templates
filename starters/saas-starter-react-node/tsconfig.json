@@ -1,0 +1,22 @@
+{
+  // Server, shared code, tests and config files. The client has client/tsconfig.json.
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "rewriteRelativeImportExtensions": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    // Only for the shadcn CLI, which reads the "@/" alias from here; the server never uses it.
+    "paths": { "@/*": ["./client/src/*"] }
+  },
+  "include": ["server", "shared", "drizzle.config.ts", "vite.config.ts", "vitest.config.ts"]
+}
