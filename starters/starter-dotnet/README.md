@@ -1,122 +1,167 @@
-<p align="center">
-  <img src="./logo.png" alt="Light Cloud" width="200" />
-</p>
+# ASP.NET Core Minimal API Starter (.NET 8, C#)
 
-<h1 align="center">.NET API Boilerplate</h1>
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE) [![ASP.NET Core 8](https://img.shields.io/badge/ASP.NET%20Core-8-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/apps/aspnet) [![.NET 8](https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com) [![Tests: xUnit](https://img.shields.io/badge/tests-xUnit-512BD4)](tests) [![Use this template](https://img.shields.io/badge/use%20this-template-2ea44f?logo=github)](https://github.com/light-cloud-templates/aspnet-core-api-starter/generate) [![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/aspnet-core-api-starter)
 
-<p align="center">
-  A modern ASP.NET Core minimal API, ready to deploy on Light Cloud.
-</p>
-
-<p align="center">
-  <a href="https://www.light-cloud.com/templates/starter-dotnet"><img src="https://light-cloud.com/button.svg" alt="Deploy to Light Cloud" /></a>
-</p>
-
----
+An ASP.NET Core minimal API starter in C# on .NET 8, with a two-stage Dockerfile. It is a small, tested REST API boilerplate for .NET developers who want a working web service with endpoints grouped in extension classes, the options pattern for settings, dependency injection, CORS and a health check, ready to rename and extend. It runs with `dotnet run` locally or as a container anywhere Docker runs, and deploys to Light Cloud in one click.
 
 ## Features
 
-- ASP.NET Core minimal APIs on .NET 8
-- Endpoints grouped in extension classes, services registered in DI, `Program.cs` kept short
-- Settings through the options pattern (`appsettings.json`, overridable by environment variables)
-- xUnit tests that run the app in memory with `WebApplicationFactory`
-- CORS enabled
-- Docker-ready for Cloud Run
+- ASP.NET Core minimal APIs on .NET 8, with a short `Program.cs`
+- Endpoints grouped in an extension class (`MapRootEndpoints`), services registered in DI
+- Settings through the options pattern: the `Api` section of `appsettings.json`, overridable by environment variables such as `Api__Message`
+- `GET /health` with a timestamp and uptime, counted from app start by a singleton `Uptime` service
+- CORS open to any origin, method and header, so a browser frontend on another domain can call it
+- Listens on `0.0.0.0` and the port in `PORT`, with `8080` as the fallback
+- xUnit tests that run the real app in memory with `WebApplicationFactory`
+- Two-stage `Dockerfile`: the .NET 8 SDK image builds, the smaller ASP.NET runtime image runs
+
+## Quick start
+
+You need the .NET 8 SDK.
+
+```bash
+git clone https://github.com/light-cloud-templates/aspnet-core-api-starter.git
+cd aspnet-core-api-starter
+dotnet run
+```
+
+Open <http://localhost:8080> to see the API info. `dotnet run` uses the `http` profile in `Properties/launchSettings.json`, which sets `PORT=8080` and the `Development` environment.
+
+Other ways to start:
+
+- **Use this template**: press [Use this template](https://github.com/light-cloud-templates/aspnet-core-api-starter/generate) to create your own repository from this one.
+- **Deploy to Light Cloud**: open the [template page](https://www.light-cloud.com/templates/aspnet-core-api-starter) and press Deploy to get a running copy.
+
+## Deploy
+
+### Deploy to Light Cloud
+
+[![Deploy to Light Cloud](https://light-cloud.com/button.svg)](https://www.light-cloud.com/templates/aspnet-core-api-starter)
+
+The Deploy button copies this template into your GitHub account and creates a server app: Light Cloud builds the `Dockerfile` and runs the image as a container that listens on the port in `PORT`.
+
+There are no secrets to fill in. Every push to the default branch deploys again. The Free plan includes up to 3 server apps.
+
+### Deploy anywhere else
+
+This is a standard ASP.NET Core app with no Light Cloud code in it. Any host that runs Docker runs the image:
+
+```bash
+docker build -t aspnet-core-api-starter .
+docker run -p 8080:8080 aspnet-core-api-starter
+```
+
+Without Docker, publish it and run the DLL on any host with the ASP.NET Core 8 runtime:
+
+```bash
+dotnet publish DotnetApi.csproj -c Release -o out
+dotnet out/DotnetApi.dll
+```
+
+## Project structure
+
+```text
+.
+├── Program.cs                     # services, CORS, port, endpoint mapping
+├── Endpoints/
+│   └── RootEndpoints.cs           # GET / and GET /health
+├── Services/
+│   ├── ApiInfoOptions.cs          # the "Api" settings section
+│   └── Uptime.cs                  # how long the app has been running
+├── Properties/
+│   └── launchSettings.json        # dotnet run profile: PORT=8080, Development
+├── appsettings.json               # logging and the "Api" section
+├── appsettings.Development.json   # logging in Development
+├── tests/
+│   └── DotnetApi.Tests/           # xUnit with WebApplicationFactory
+├── DotnetApi.csproj               # web project, net8.0
+├── DotnetApi.sln                  # solution: web project and tests
+├── Dockerfile                     # SDK image builds, ASP.NET image runs
+├── .mcp.json                      # Light Cloud MCP server for AI coding agents
+└── .env.example                   # PORT and the Api__ overrides
+```
+
+The web project stays at the root so `dotnet run` works there; `DefaultItemExcludes` in the `.csproj` keeps `tests/` out of it.
+
+## API endpoints
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/` | API info: `message`, `version` and the list of endpoints |
+| `GET` | `/health` | `{"status": "healthy", "timestamp": "...", "uptime": 12.3}`, uptime in seconds |
+
+Unknown routes answer `404`.
+
+```bash
+curl http://localhost:8080/health
+```
+
+On Light Cloud, use your app's URL instead of `http://localhost:8080`.
+
+## Environment variables
+
+| Name | Required | Default | What it does |
+| --- | --- | --- | --- |
+| `PORT` | No | `8080` | Port to listen on. Set by Light Cloud. |
+| `Api__Message` | No | `Welcome to your .NET API` | `message` returned by `GET /`. |
+| `Api__Version` | No | `1.0.0` | `version` returned by `GET /`. |
+| `ASPNETCORE_ENVIRONMENT` | No | `Production` | `Development` when started with `dotnet run`. |
+
+Any value in `appsettings.json` can be overridden the same way, with `__` between section and key.
+
+## Testing
+
+```bash
+dotnet test
+```
+
+The tests start the app in memory with `WebApplicationFactory<Program>`, so nothing listens on a port. They check `GET /`, `GET /health` and a `404` for an unknown route.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    client["Client"] -->|HTTP| endpoints["RootEndpoints<br/>GET / and GET /health"]
-    endpoints --> options["ApiInfoOptions<br/>(appsettings.json + environment)"]
-    endpoints --> uptime["Uptime<br/>(singleton)"]
+    client["Client: browser, curl, app"] -->|HTTP JSON| kestrel["Kestrel on PORT<br/>CORS middleware"]
+    kestrel --> endpoints["RootEndpoints<br/>GET / and GET /health"]
+    endpoints --> options["ApiInfoOptions<br/>appsettings.json and environment"]
+    endpoints --> uptime["Uptime singleton"]
 ```
 
-## API Endpoints
+`Program.cs` binds Kestrel to the port in `PORT`, registers the options and the `Uptime` singleton, and maps the endpoints. Minimal API handlers get their dependencies as parameters and return anonymous objects, which ASP.NET Core writes as JSON.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Welcome message and API info |
-| GET | `/health` | Health check with uptime |
+## FAQ
 
-## Project structure
+### How do I add a new endpoint to an ASP.NET Core minimal API?
 
-```
-.
-├── DotnetApi.csproj        web project (the Dockerfile publishes this one)
-├── DotnetApi.sln           solution: web project + tests
-├── Program.cs              services, middleware, endpoint mapping
-├── appsettings.json        logging and the "Api" section
-├── Dockerfile
-├── Endpoints/RootEndpoints.cs
-├── Services/               ApiInfoOptions, Uptime
-├── Properties/launchSettings.json
-└── tests/DotnetApi.Tests/  xUnit + WebApplicationFactory
-```
+Add a static class in `Endpoints/` with a `Map...Endpoints` extension method, as in `RootEndpoints.cs`, and call it from `Program.cs` next to `app.MapRootEndpoints()`.
 
-The web project stays at the root so `dotnet run` works there; its `DefaultItemExcludes` keeps `tests/` out of it.
+### How do I add Swagger or OpenAPI docs?
 
-## Local Development
+It has none yet. On .NET 8, add the `Swashbuckle.AspNetCore` package, call `builder.Services.AddEndpointsApiExplorer()` and `builder.Services.AddSwaggerGen()`, then `app.UseSwagger()` and `app.UseSwaggerUI()`; Swagger UI is then at `/swagger`.
 
-```bash
-# Run the application
-dotnet run
+### How do I change settings with environment variables in .NET?
 
-# Run the tests
-dotnet test
+Use the setting's path with double underscores: `Api__Message="Hello" dotnet run` overrides `Api:Message` from `appsettings.json`. Environment variables win over the JSON files.
 
-# Build for release (what the Dockerfile does)
-dotnet publish DotnetApi.csproj -c Release
-```
+### How do I restrict CORS to my own frontend?
 
-The API will be available at `http://localhost:8080`. `.env.example` lists the settings you can override.
+Replace `AllowAnyOrigin()` in `Program.cs` with `WithOrigins("https://your-frontend.example")`.
 
-## Deploy to Light Cloud
+### Can I deploy it without Light Cloud?
 
-### 1. Create an Account
+Yes. It is a plain ASP.NET Core app with a standard `Dockerfile`: run the image on any container host, or `dotnet publish` it and run `dotnet DotnetApi.dll` on a server with the .NET 8 runtime.
 
-Visit [console.light-cloud.com](https://console.light-cloud.com) and sign up with GitHub or Google.
+## Related templates
 
-### 2. Create New Application
+- [aspnet-core-postgresql-crud-api](https://github.com/light-cloud-templates/aspnet-core-postgresql-crud-api): ASP.NET Core with a PostgreSQL CRUD API
+- [spring-boot-api-starter](https://github.com/light-cloud-templates/spring-boot-api-starter): the same kind of API in Java and Spring Boot
+- [go-api-starter](https://github.com/light-cloud-templates/go-api-starter): a REST API in Go with the standard library
+- [dockerfile-starter](https://github.com/light-cloud-templates/dockerfile-starter): bring your own Dockerfile for any runtime
 
-1. Click **"New Application"** in the dashboard
-2. Select **"Container"** as the deployment type
-3. Choose **".NET"** as the runtime
+## Licence
 
-### 3. Connect Repository
-
-- **Option A:** Fork this repository and connect it via GitHub
-- **Option B:** Push this code to your own GitHub repository and connect it
-
-### 4. Configure Settings
-
-Light Cloud will auto-detect your settings, but you can verify:
-
-| Setting | Value |
-|---------|-------|
-| Port | `8080` |
-| Dockerfile | Auto-detected |
-
-### 5. Deploy
-
-Click **"Deploy"** and your API will be live in minutes!
-
-Your API will be available at `https://your-app.light-cloud.io`
-
-## Learn More
-
-- [ASP.NET Core documentation](https://learn.microsoft.com/aspnet/core)
-- [Minimal APIs overview](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis)
-- [Light Cloud documentation](https://docs.light-cloud.com)
+MIT, see [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://light-cloud.com">Website</a> •
-  <a href="https://docs.light-cloud.com">Documentation</a> •
-  <a href="https://console.light-cloud.com">Console</a>
-</p>
-
-<p align="center">
-  Made with ☁️ by <a href="https://light-cloud.com">Light Cloud</a>
-</p>
+Maintained by [Light Cloud](https://light-cloud.com): deploy apps, APIs and databases in one click.

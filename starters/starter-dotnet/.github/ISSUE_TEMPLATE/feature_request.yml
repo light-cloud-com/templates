@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest a change or an addition to this template.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: The problem or the use case, in a few sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you suggest
+      description: How the template could support it. Code sketches are welcome.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This is about the template code, not about the Light Cloud platform.
