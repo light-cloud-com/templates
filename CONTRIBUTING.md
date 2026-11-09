@@ -30,4 +30,4 @@ The script copies each template from its repository, records the commit in `cata
 
 ## Add one of ours
 
-Add an entry to `catalogue.json` (folder, slug, name, description, language, database, repo) and run the script. The gallery gets its list from the platform, not this file, so add the template there as well.
+Add an entry to `catalogue.json` (folder, slug, name, description, language, database, repo) and run the script. Commit each new template on its own, with a subject people would search for (framework, language, what it is, e.g. "Express CRUD REST API starter with PostgreSQL for Node.js") and a short body saying what it does and that it deploys to Light Cloud in one click. The gallery gets its list from the platform, not this file, so add the template there as well.
