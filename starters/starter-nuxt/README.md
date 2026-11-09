@@ -16,23 +16,56 @@
 
 ## Features
 
-- Nuxt 4, scaffolded with `create nuxt`
-- Vue 3 with server-side rendering
-- File-based routing
-- Builds a Node server to `.output`
+- Nuxt 4 with server-side rendering and Vue 3
+- File-based routing: Home, About and Nuxt's built-in 404
+- Default layout with a shared header component
+- Server API route at `/api/health`
+- ESLint via `@nuxt/eslint`, unit tests with Vitest
+- Runtime config overridable with `NUXT_PUBLIC_*` environment variables
+- Builds a standalone Node server into `.output/`
 
-## Local Development
+## How it works
+
+```mermaid
+flowchart LR
+    browser["Browser"] -->|HTTPS| server["Light Cloud container<br/>node .output/server/index.mjs"]
+    server --> pages["app/pages<br/>rendered on the server, hydrated in the browser"]
+    server --> api["server/api/health.get.ts<br/>JSON"]
+```
+
+## Project structure
+
+```text
+.
+├── app/
+│   ├── app.vue                 # Root: layout + current page
+│   ├── layouts/default.vue     # Page shell: header, main, footer
+│   ├── pages/                  # index.vue (/), about.vue (/about)
+│   ├── components/AppHeader.vue
+│   ├── utils/formatDateTime.ts # Auto-imported helper
+│   └── assets/css/main.css     # Global styles
+├── server/api/health.get.ts    # GET /api/health -> {"status":"ok"}
+├── test/unit/                  # Vitest unit tests
+├── public/                     # Static files served from /
+├── .env.example
+├── eslint.config.mjs
+└── nuxt.config.ts
+```
+
+## Local development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build and run for production
-npm run build && npm start
+npm install       # install dependencies (runs nuxt prepare)
+npm run dev       # dev server on http://localhost:3000
+npm run lint      # ESLint
+npm test          # Vitest
+npm run build     # production build into .output/
+npm start         # run the production server (honours PORT)
 ```
+
+## Environment variables
+
+Copy `.env.example` to `.env`. `NUXT_PUBLIC_SITE_NAME` overrides `runtimeConfig.public.siteName` when the server starts, not at build time. `NUXT_PUBLIC_*` values reach the browser; keep secrets in non-public `runtimeConfig` keys.
 
 ## Deploy to Light Cloud
 
@@ -68,10 +101,14 @@ Your app will be available at `https://your-app.light-cloud.io`
 
 ## Learn More
 
-This starter is the output of `npm create nuxt@latest`, with only the changes noted above.
+This starter began as `npm create nuxt@latest` output and adds the structure described above.
 
 - [Nuxt documentation](https://nuxt.com/docs)
 - [Light Cloud documentation](https://docs.light-cloud.com)
+
+## License
+
+[MIT](./LICENSE)
 
 ---
 
