@@ -17,9 +17,20 @@
 ## Features
 
 - Sinatra 4 on Puma
-- Modular style — `Sinatra::Base` subclass mounted in `config.ru`
-- JSON responses
-- Served through Rack
+- Modular style: a `Sinatra::Base` subclass in `app/`, routes split into extensions under `app/routes/`
+- JSON responses, including JSON 404 and 500 errors
+- Minitest + Rack::Test tests, run with `rake`
+- Served through Rack (`config.ru`)
+
+## How it works
+
+```mermaid
+flowchart LR
+    client["Client"] -->|HTTP| puma["Puma"]
+    puma --> rack["config.ru"]
+    rack --> app["Application<br/>(Sinatra::Base)"]
+    app --> root["Routes::Root<br/>GET /"]
+```
 
 ## API Endpoints
 
@@ -27,7 +38,26 @@
 |--------|----------|-------------|
 | GET | `/` | Welcome message |
 
+## Project structure
+
+```
+.
+├── config.ru              Rack entry point (rackup runs this)
+├── Gemfile, Gemfile.lock
+├── Rakefile               rake test
+├── app
+│   ├── application.rb     Application < Sinatra::Base: settings, helpers, error handlers
+│   └── routes/root.rb     GET /
+└── test
+    ├── test_helper.rb
+    └── application_test.rb
+```
+
+Add routes as a new module in `app/routes/` and `register` it in `app/application.rb`.
+
 ## Local Development
+
+You need Ruby 3.2 or newer.
 
 ```bash
 # Install dependencies
@@ -35,6 +65,9 @@ bundle install
 
 # Run the server
 bundle exec rackup -p 3000
+
+# Run the tests
+bundle exec rake test
 ```
 
 The API will be available at `http://localhost:3000`

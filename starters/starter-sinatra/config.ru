@@ -1,3 +1,5 @@
-require_relative "app"
+# frozen_string_literal: true
 
-run App
+require_relative "app/application"
+
+run Application
